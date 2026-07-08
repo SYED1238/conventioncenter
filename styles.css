@@ -283,11 +283,11 @@ body {
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 14px;
-    border-radius: 12px;
+    border-radius: 30px;
     cursor: pointer;
     border: none;
     outline: none;
-    transition: all var(--transition-smooth);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -298,14 +298,86 @@ body {
 .btn-primary {
     background: #ffffff;
     color: #030408;
-    padding: 14px 28px;
-    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    padding: 14px 32px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    font-weight: 700;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Backplate border-light wrapper that matches the active weather */
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: -1.5px;
+    left: -1.5px;
+    right: -1.5px;
+    bottom: -1.5px;
+    background: var(--btn-glow-gradient, linear-gradient(135deg, #ffd700, #ff9e22));
+    border-radius: 30px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+/* Chrome dynamic light shine flare */
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.75) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg) translateX(-150px);
+    animation: btn-shine-flare 5.5s infinite ease-in-out;
+}
+
+@keyframes btn-shine-flare {
+    0% {
+        transform: skewX(-25deg) translateX(-150px);
+    }
+    15%, 100% {
+        transform: skewX(-25deg) translateX(450px);
+    }
+}
+
+.hero-section[data-weather="clear"] .btn-primary {
+    --btn-glow-gradient: linear-gradient(135deg, #ffd700 0%, #ff9e22 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(255, 158, 34, 0.42);
+}
+
+.hero-section[data-weather="rain"] .btn-primary {
+    --btn-glow-gradient: linear-gradient(135deg, #aae2ff 0%, #3a8dff 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(58, 141, 255, 0.42);
+}
+
+.hero-section[data-weather="night"] .btn-primary {
+    --btn-glow-gradient: linear-gradient(135deg, #dfff9e 0%, #b4f56e 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(180, 245, 110, 0.45);
+}
+
+.btn-primary:hover::before {
+    opacity: 1;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(255, 255, 255, 0.25);
-    background: #f8f8f8;
+    transform: translateY(-3.5px) scale(1.02);
+    box-shadow: var(--btn-hover-shadow), 0 12px 30px rgba(0, 0, 0, 0.22);
+    border-color: transparent;
+}
+
+.btn-primary:hover .btn-icon {
+    transform: translateX(4px);
+}
+
+.btn-icon {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .btn-secondary {
@@ -313,6 +385,7 @@ body {
     color: var(--clr-text-primary);
     padding: 10px 20px;
     border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 30px;
 }
 
 .btn-secondary:hover {
@@ -322,16 +395,63 @@ body {
 }
 
 .btn-outline {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--clr-text-primary);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 14px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 14px 32px;
+    border-radius: 30px;
+}
+
+.btn-outline > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Cursor-specular spotlight inside border */
+.btn-outline::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle 90px at var(--mx, 50%) var(--my, 50%),
+        var(--btn-glow-alpha, rgba(255, 255, 255, 0.15)),
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-section[data-weather="clear"] .btn-outline {
+    --btn-glow-alpha: rgba(255, 215, 0, 0.15);
+    --btn-outline-glow: rgba(255, 215, 0, 0.55);
+}
+
+.hero-section[data-weather="rain"] .btn-outline {
+    --btn-glow-alpha: rgba(79, 168, 255, 0.15);
+    --btn-outline-glow: rgba(79, 168, 255, 0.55);
+}
+
+.hero-section[data-weather="night"] .btn-outline {
+    --btn-glow-alpha: rgba(180, 245, 110, 0.18);
+    --btn-outline-glow: rgba(180, 245, 110, 0.6);
+}
+
+.btn-outline:hover::after {
+    opacity: 1;
 }
 
 .btn-outline:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-2px);
+    transform: translateY(-3.5px) scale(1.02);
+    border-color: var(--btn-outline-glow, rgba(255, 255, 255, 0.5));
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 12px var(--btn-glow-alpha, rgba(255, 255, 255, 0.1));
+    background: rgba(255, 255, 255, 0.06);
 }
 
 /* ==========================================================================
