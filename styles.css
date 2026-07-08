@@ -2072,3 +2072,214 @@ body {
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.35);
 }
+
+/* =========================================================================
+   Atmosphere Night Theme - Ethereal Luminous Typography & Spotlight
+   ========================================================================= */
+
+.hero-section[data-weather="night"] .hero-title {
+    background: radial-gradient(
+        circle 250px at var(--text-mx, -9999px) var(--text-my, -9999px),
+        #ffffff 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        rgba(255, 255, 255, 0.5) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #ffffff;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.05)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    transition: filter 0.3s ease;
+}
+
+.hero-section[data-weather="night"] .hero-title .text-gradient {
+    background: radial-gradient(
+        circle 180px at var(--text-mx, 50%) var(--text-my, 50%),
+        #ffffff 0%,
+        #dfff9e 50%,
+        #b4f56e 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 12px rgba(180, 245, 110, 0.55)) drop-shadow(0 0 25px rgba(180, 245, 110, 0.2));
+    animation: night-flicker-start 1.4s ease-out forwards, night-text-pulse 4s ease-in-out infinite alternate 1.4s;
+}
+
+.hero-section[data-weather="night"] .night-glow-text {
+    color: #fff7d6;
+    font-weight: 500;
+    filter: drop-shadow(0 0 8px rgba(255, 247, 214, 0.6)) drop-shadow(0 0 18px rgba(255, 247, 214, 0.25));
+    animation: night-flicker-start-gold 1.4s ease-out forwards, night-subtitle-glow 3.5s ease-in-out infinite alternate 1.4s;
+    display: inline-block;
+}
+
+/* Cinematic Startup Flickers (bulb warming up) */
+@keyframes night-flicker-start {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 12px rgba(180, 245, 110, 0.6)) drop-shadow(0 0 25px rgba(180, 245, 110, 0.2));
+    }
+    20%, 24%, 55% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px rgba(180, 245, 110, 0.1));
+    }
+}
+
+@keyframes night-flicker-start-gold {
+    0%, 15%, 19%, 24%, 48%, 52%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px rgba(255, 247, 214, 0.65)) drop-shadow(0 0 18px rgba(255, 247, 214, 0.25));
+    }
+    17%, 21%, 50% {
+        opacity: 0.35;
+        filter: drop-shadow(0 0 2px rgba(255, 247, 214, 0.1));
+    }
+}
+
+/* Luminous Breathing/Twinkling Ambient Pulsing */
+@keyframes night-text-pulse {
+    0% {
+        filter: drop-shadow(0 0 8px rgba(180, 245, 110, 0.45)) drop-shadow(0 0 18px rgba(180, 245, 110, 0.15));
+    }
+    100% {
+        filter: drop-shadow(0 0 18px rgba(180, 245, 110, 0.8)) drop-shadow(0 0 35px rgba(180, 245, 110, 0.35));
+    }
+}
+
+@keyframes night-subtitle-glow {
+    0% {
+        filter: drop-shadow(0 0 6px rgba(255, 247, 214, 0.45)) drop-shadow(0 0 12px rgba(255, 247, 214, 0.15));
+    }
+    100% {
+        filter: drop-shadow(0 0 14px rgba(255, 247, 214, 0.85)) drop-shadow(0 0 28px rgba(255, 247, 214, 0.35));
+    }
+}
+
+/* =========================================================================
+   Atmosphere Rain Theme - Wet Glistening Spotlight & Water-Flow Slide
+   ========================================================================= */
+
+.hero-section[data-weather="rain"] .hero-title {
+    background: radial-gradient(
+        circle 250px at var(--text-mx, -9999px) var(--text-my, -9999px),
+        #ffffff 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        rgba(255, 255, 255, 0.5) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #ffffff;
+    filter: drop-shadow(0 0 12px rgba(168, 219, 255, 0.08)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transition: filter 0.3s ease;
+}
+
+.hero-section[data-weather="rain"] .hero-title .text-gradient {
+    background: linear-gradient(
+        to bottom,
+        #3a8dff 0%,
+        #8cc4ff 25%,
+        #4fa8ff 50%,
+        #aae2ff 75%,
+        #3a8dff 100%
+    );
+    background-size: 100% 200%;
+    background-position-y: 0%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(79, 168, 255, 0.65)) drop-shadow(0 0 20px rgba(79, 168, 255, 0.3));
+    animation: rain-droplet-slide 6s linear infinite;
+}
+
+.hero-section[data-weather="rain"] .rain-glow-text {
+    color: #e3f4ff;
+    font-weight: 500;
+    filter: drop-shadow(0 0 6px rgba(168, 219, 255, 0.6)) drop-shadow(0 0 14px rgba(168, 219, 255, 0.2));
+    animation: rain-subtitle-shimmer 4s ease-in-out infinite alternate;
+    display: inline-block;
+}
+
+/* Water Ripple / Flow Sliding Animation */
+@keyframes rain-droplet-slide {
+    0% {
+        background-position-y: 0%;
+    }
+    100% {
+        background-position-y: 200%;
+    }
+}
+
+@keyframes rain-subtitle-shimmer {
+    0% {
+        filter: drop-shadow(0 0 5px rgba(168, 219, 255, 0.45));
+        transform: scale(0.995);
+    }
+    100% {
+        filter: drop-shadow(0 0 12px rgba(168, 219, 255, 0.8)) drop-shadow(0 0 20px rgba(168, 219, 255, 0.3));
+        transform: scale(1.005);
+    }
+}
+
+/* =========================================================================
+   Atmosphere Clear Theme - Solar Flare Spotlight & Sunbeam Shimmer
+   ========================================================================= */
+
+.hero-section[data-weather="clear"] .hero-title {
+    background: radial-gradient(
+        circle 250px at var(--text-mx, -9999px) var(--text-my, -9999px),
+        #ffffff 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        rgba(255, 255, 255, 0.5) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #ffffff;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.05)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    transition: filter 0.3s ease;
+}
+
+.hero-section[data-weather="clear"] .hero-title .text-gradient {
+    background: radial-gradient(
+        circle 180px at var(--text-mx, 50%) var(--text-my, 50%),
+        #ffffff 0%,
+        #ffe79a 50%,
+        #ff9e22 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 158, 34, 0.45));
+    animation: clear-text-shimmer 5s ease-in-out infinite alternate;
+}
+
+.hero-section[data-weather="clear"] .clear-glow-text {
+    color: #fff9e6;
+    font-weight: 500;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 14px rgba(255, 215, 0, 0.2));
+    animation: clear-subtitle-shimmer 4s ease-in-out infinite alternate;
+    display: inline-block;
+}
+
+/* Solar Flare Shimmers */
+@keyframes clear-text-shimmer {
+    0% {
+        filter: drop-shadow(0 0 8px rgba(255, 158, 34, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+        transform: translateY(0);
+    }
+    50% {
+        filter: drop-shadow(0 0 16px rgba(255, 158, 34, 0.65)) drop-shadow(0 4px 8px rgba(255, 158, 34, 0.25));
+        transform: translateY(0.5px);
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(255, 158, 34, 0.45)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+        transform: translateY(-0.5px);
+    }
+}
+
+@keyframes clear-subtitle-shimmer {
+    0% {
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.35));
+        opacity: 0.95;
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 18px rgba(255, 215, 0, 0.25));
+        opacity: 1;
+    }
+}

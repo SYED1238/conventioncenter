@@ -109,15 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroContent = {
         clear: {
             title: 'Engineering the Future. <br><span class="text-gradient">Rooted in Excellence.</span>',
-            subtitle: 'Step onto a campus designed for the next century. Experience our state-of-the-art laboratory hubs, architectural marvels, and collaborative student spaces.'
+            subtitle: 'Step onto a campus designed for the <span class="clear-glow-text">next century</span>. Experience our <span class="clear-glow-text">state-of-the-art laboratory hubs</span>, architectural marvels, and <span class="clear-glow-text">collaborative student spaces</span>.'
         },
         rain: {
             title: 'Experience Ghousia<br><span class="text-gradient">in the Monsoon.</span>',
-            subtitle: 'Watch the campus come alive as monsoon rains transform every corridor into a cinematic frame. The rhythm of rain meets the pulse of learning.'
+            subtitle: 'Watch the campus come alive as <span class="rain-glow-text">monsoon rains</span> transform every corridor into a <span class="rain-glow-text">cinematic frame</span>. The <span class="rain-glow-text">rhythm of rain</span> meets the pulse of learning.'
         },
         night: {
             title: 'A Campus That Never<br><span class="text-gradient">Stops Inspiring.</span>',
-            subtitle: 'When the sun sets, our campus illuminates with purpose. Late-night labs, lit pathways, and the quiet energy of minds at work.'
+            subtitle: 'When the sun sets, our campus <span class="night-glow-text">illuminates with purpose</span>. <span class="night-glow-text">Late-night labs</span>, lit pathways, and the <span class="night-glow-text">quiet energy</span> of minds at work.'
         }
     };
 
@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Subtitle follows with slight delay for stagger
         setTimeout(() => {
-            heroSubtitle.textContent = content.subtitle;
+            heroSubtitle.innerHTML = content.subtitle;
             heroSubtitle.classList.remove('transitioning-out');
             heroSubtitle.classList.add('transitioning-in');
 
@@ -774,6 +774,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. Atmospheric Canvas Engines (Day, Rain, Night)
     // -------------------------------------------------------------------------
 
+    // --- Sky Boundary Check for Stars (Avoids Building and Foliage) ---
+    function getSkyHeight(x) {
+        const width = state.width;
+        const height = state.height;
+        
+        // Default sky cutoff on the left (under foliage/trees)
+        let skyRatio = 0.35;
+        
+        if (x >= width * 0.28) {
+            // Slopes slightly upwards towards the right (building roof starts at 35% height and goes up to 23% height)
+            const t = (x - width * 0.28) / (width * 0.57); // 0.85 - 0.28 = 0.57
+            if (t <= 1) {
+                skyRatio = 0.35 - t * 0.12; 
+            } else {
+                skyRatio = 0.23; // Stay clear on the far right
+            }
+        }
+        
+        return height * skyRatio;
+    }
+
     // --- Stars Class (Night) ---
     class Star {
         constructor() {
@@ -783,7 +804,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         reset() {
             this.x = Math.random() * state.width;
-            this.y = Math.random() * (state.height * 0.7); // Mostly sky coverage
+            const maxY = getSkyHeight(this.x);
+            this.y = Math.random() * maxY;
             this.size = 0.4 + Math.random() * 1.3;
             this.opacitySpeed = 0.005 + Math.random() * 0.012;
             this.growing = Math.random() > 0.5;
@@ -816,60 +838,210 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Firefly Class (Night) ---
     class Firefly {
         constructor() {
-            this.reset();
+            this.reset(true); // pass true to randomize initial phase
         }
 
-        reset() {
+        reset(isInitial = false) {
             // Constrain fireflies horizontally to the left side where the trees are
             this.x = Math.random() * (state.width * 0.28);
             // Constrain vertically around the foliage (from 35% down to 90% of screen height)
             this.y = state.height * 0.35 + Math.random() * (state.height * 0.55);
-            this.size = 1.0 + Math.random() * 1.5;
-            this.speedX = (Math.random() - 0.45) * 0.25; // Drifting slightly
-            this.speedY = (Math.random() - 0.5) * 0.25;
+            
+            // 3D Depth coordinate: 0.1 (far, slow, blurry) to 1.0 (near, fast, sharp)
+            this.z = 0.1 + Math.random() * 0.9;
+            
+            // Size scales with depth
+            this.baseSize = 0.8 + this.z * 1.8; // size ranges from ~0.98px to 2.6px
+            this.size = this.baseSize;
+            
+            // Base drift speeds scale with depth
+            const baseDrift = 0.08 + this.z * 0.15;
+            this.speedX = (Math.random() - 0.45) * baseDrift;
+            this.speedY = (Math.random() - 0.5) * baseDrift;
+            
+            // Actual velocity vector (for smooth physics random walk)
+            this.vx = this.speedX;
+            this.vy = this.speedY;
+
+            // Biological flash states: 'off', 'flash-up', 'flash-down'
+            this.flashState = 'off';
             this.alpha = 0;
-            this.alphaTarget = 0.2 + Math.random() * 0.5;
-            this.fadeSpeed = 0.005 + Math.random() * 0.01;
-            this.fadingIn = true;
+            
+            // Max flash brightness scales with depth
+            this.maxAlpha = 0.3 + this.z * 0.6; // deeper is dimmer, closer is brighter
+            
+            // Flash timings (in frames)
+            this.flashUpSpeed = 0.04 + Math.random() * 0.04;   // Fast fade up
+            this.flashDownSpeed = 0.008 + Math.random() * 0.012; // Slow fade down
+            
+            // Dark period timer (how long the firefly stays dark before flashing)
+            this.darkDuration = 100 + Math.random() * 250; // frames
+            this.darkTimer = isInitial ? Math.random() * this.darkDuration : this.darkDuration;
+
+            // Flash type: 'single' or 'double' (adds variety to the blinking patterns)
+            this.flashType = Math.random() > 0.4 ? 'single' : 'double';
+            this.doubleFlashStage = 0; // 0 = first flash, 1 = mini dark, 2 = second flash
+
+            // Sine wave floating offsets
             this.angle = Math.random() * Math.PI * 2;
-            this.waveSpeed = 0.01 + Math.random() * 0.02;
-            this.waveRadius = 0.1 + Math.random() * 0.25;
+            this.waveSpeed = 0.01 + Math.random() * 0.015;
+            this.waveRadius = 0.05 + this.z * 0.12;
+
+            // Reaction to mouse
+            this.scared = false;
+            this.scaredTimer = 0;
         }
 
         update() {
-            // Dynamic Brownian-like float curves
+            // Apply slight random Brownian acceleration to velocity for organic movement
+            this.vx += (Math.random() - 0.5) * 0.015;
+            this.vy += (Math.random() - 0.5) * 0.015;
+            
+            // Speed limits based on depth and scared state
+            let maxSpeed = 0.2 + this.z * 0.4;
+            if (this.scared) {
+                maxSpeed *= 4; // Fly away quickly!
+            }
+            
+            // Damp and limit velocity
+            const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+            if (currentSpeed > maxSpeed) {
+                this.vx = (this.vx / currentSpeed) * maxSpeed;
+                this.vy = (this.vy / currentSpeed) * maxSpeed;
+            }
+            
+            // Sine wave overlay
             this.angle += this.waveSpeed;
-            this.x += this.speedX + Math.cos(this.angle) * this.waveRadius;
-            this.y += this.speedY + Math.sin(this.angle) * this.waveRadius;
+            let driftX = this.vx + Math.cos(this.angle) * this.waveRadius;
+            let driftY = this.vy + Math.sin(this.angle) * this.waveRadius;
 
-            // Handle glowing fading phases
-            if (this.fadingIn) {
-                this.alpha += this.fadeSpeed;
-                if (this.alpha >= this.alphaTarget) {
-                    this.alpha = this.alphaTarget;
-                    this.fadingIn = false;
-                }
-            } else {
-                this.alpha -= this.fadeSpeed * 0.7; // Fade out slightly slower
-                if (this.alpha <= 0.0) {
-                    this.reset();
+            // --- J-Stroke Upward Swoop ---
+            // Real fireflies do an upward swoop when flashing to attract mates.
+            if (this.flashState === 'flash-up') {
+                driftY -= (0.15 + this.z * 0.2); // upward lift
+            } else if (this.flashState === 'flash-down') {
+                driftY -= (0.05 + this.z * 0.1); // lingering upward lift
+            }
+
+            this.x += driftX;
+            this.y += driftY;
+
+            // --- Mouse Interaction ---
+            // If mouse is close (desktop only, distance < 110px)
+            if (state.mouseX > 0 && state.mouseY > 0) {
+                const drawX = this.x + state.parallaxX * this.z * 1.5;
+                const drawY = this.y + state.parallaxY * this.z * 1.5;
+                const dx = state.mouseX - drawX;
+                const dy = state.mouseY - drawY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 110) {
+                    if (!this.scared) {
+                        this.scared = true;
+                        this.scaredTimer = 60; // stay scared for 1 second (60 frames)
+                        // Accelerate away from mouse
+                        const angleToMouse = Math.atan2(dy, dx);
+                        this.vx = -Math.cos(angleToMouse) * 1.8;
+                        this.vy = -Math.sin(angleToMouse) * 1.4;
+                        // Turn off light immediately in fear!
+                        this.flashState = 'off';
+                        this.alpha = 0;
+                        this.darkTimer = 180; // delay next flash
+                    }
                 }
             }
 
-            // Screen boundary reset (Lock near the trees on the left)
-            if (this.x < -10 || this.x > state.width * 0.32 || this.y < state.height * 0.30 || this.y > state.height * 0.95) {
-                this.reset();
+            if (this.scared) {
+                this.scaredTimer--;
+                if (this.scaredTimer <= 0) {
+                    this.scared = false;
+                }
+            }
+
+            // --- Biological Flash State Machine ---
+            if (!this.scared) {
+                if (this.flashState === 'off') {
+                    this.darkTimer--;
+                    if (this.darkTimer <= 0) {
+                        this.flashState = 'flash-up';
+                    }
+                } else if (this.flashState === 'flash-up') {
+                    this.alpha += this.flashUpSpeed;
+                    if (this.alpha >= this.maxAlpha) {
+                        this.alpha = this.maxAlpha;
+                        this.flashState = 'flash-down';
+                    }
+                } else if (this.flashState === 'flash-down') {
+                    // Exponential-like decay
+                    this.alpha -= this.flashDownSpeed;
+                    if (this.alpha <= 0.01) {
+                        this.alpha = 0;
+                        
+                        if (this.flashType === 'double' && this.doubleFlashStage === 0) {
+                            // First flash is done, brief dark period
+                            this.flashState = 'off';
+                            this.darkTimer = 15 + Math.random() * 15;
+                            this.doubleFlashStage = 1;
+                        } else if (this.flashType === 'double' && this.doubleFlashStage === 1) {
+                            // Second flash
+                            this.flashState = 'flash-up';
+                            this.doubleFlashStage = 2;
+                        } else {
+                            // Reset cycle
+                            this.flashState = 'off';
+                            this.darkDuration = 120 + Math.random() * 240;
+                            this.darkTimer = this.darkDuration;
+                            this.doubleFlashStage = 0;
+                        }
+                    }
+                }
+            }
+
+            // --- Soft Boundary Handling ---
+            const margin = 50;
+            const leftLimit = -margin;
+            const rightLimit = state.width * 0.32 + margin;
+            const topLimit = state.height * 0.30 - margin;
+            const bottomLimit = state.height * 0.95 + margin;
+
+            if (this.x < leftLimit || this.x > rightLimit || this.y < topLimit || this.y > bottomLimit) {
+                if (this.alpha > 0.05) {
+                    this.alpha -= 0.05;
+                } else {
+                    this.reset(false);
+                }
             }
         }
 
         draw(ctx) {
+            if (this.alpha <= 0) return;
+
+            // Apply 3D Parallax offset based on depth (z)
+            const drawX = this.x + state.parallaxX * this.z * 1.5;
+            const drawY = this.y + state.parallaxY * this.z * 1.5;
+
             ctx.save();
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(180, 245, 110, 0.8)';
-            ctx.fillStyle = `rgba(180, 245, 110, ${this.alpha})`;
+            
+            // Draw soft outer glowing halo (Bokeh effect)
+            const outerGlowRadius = this.size * (4.5 + (1 - this.z) * 2);
+            ctx.fillStyle = `rgba(180, 245, 110, ${this.alpha * 0.18})`;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.arc(drawX, drawY, outerGlowRadius, 0, Math.PI * 2);
             ctx.fill();
+
+            // Draw mid glow layer for extra depth
+            const midGlowRadius = this.size * 2.2;
+            ctx.fillStyle = `rgba(200, 255, 130, ${this.alpha * 0.4})`;
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, midGlowRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw intense warm core (realistic lighting: glowing cores look white/warm yellow)
+            ctx.fillStyle = `rgba(255, 255, 230, ${this.alpha})`;
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            
             ctx.restore();
         }
     }
@@ -1429,7 +1601,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getParticleLimits() {
         const isMobile = window.innerWidth <= 768;
         return {
-            stars: isMobile ? 60 : 150,
+            stars: isMobile ? 30 : 75,
             fireflies: isMobile ? 5 : 15,
             birds: isMobile ? 6 : 12, // Increased from 3 : 5 to 6 : 12
             clouds: isMobile ? 2 : 4,
@@ -1737,6 +1909,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 controller.style.setProperty('--tilt-y', '0deg');
             }
         });
+
+        // Reset tilt when cursor leaves the page
+        document.addEventListener('mouseleave', () => {
+            controller.style.setProperty('--tilt-x', '0deg');
+            controller.style.setProperty('--tilt-y', '0deg');
+        });
     }
 
     // --- Parallax Mouse Tracking ---
@@ -1744,11 +1922,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth <= 768) return;
 
         document.addEventListener('mousemove', (e) => {
+            state.mouseX = e.clientX;
+            state.mouseY = e.clientY;
             // Map mouse position to a range of -15 to 15
             const cx = state.width / 2;
             const cy = state.height / 2;
             state.targetParallaxX = ((e.clientX - cx) / cx) * 15;
             state.targetParallaxY = ((e.clientY - cy) / cy) * 15;
+
+            // Spotlight shine variables for the hero title
+            if (heroTitle) {
+                const rect = heroTitle.getBoundingClientRect();
+                const tx = e.clientX - rect.left;
+                const ty = e.clientY - rect.top;
+                heroTitle.style.setProperty('--text-mx', `${tx}px`);
+                heroTitle.style.setProperty('--text-my', `${ty}px`);
+            }
+        });
+
+        // Reset parallax when cursor leaves the page
+        document.addEventListener('mouseleave', () => {
+            state.mouseX = -1;
+            state.mouseY = -1;
+            state.targetParallaxX = 0;
+            state.targetParallaxY = 0;
+            if (heroTitle) {
+                heroTitle.style.setProperty('--text-mx', '-9999px');
+                heroTitle.style.setProperty('--text-my', '-9999px');
+            }
         });
     }
 
@@ -1802,15 +2003,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     target.style.transform = `translate3d(${pullX}px, ${pullY}px, 0) ${extraScale}`;
                     target.style.transition = 'transform 0.08s cubic-bezier(0.25, 0.8, 0.25, 1)';
                 } else {
-                    // Reset back to original layout position
+                    // Reset back to original CSS-defined position
                     target.magneticX = 0;
                     target.magneticY = 0;
-
-                    const scaleFactor = target.classList.contains('active') ? 'scale(1.02)' : '';
-                    const translationY = target.classList.contains('active') ? 'translateY(-2px)' : '';
-                    target.style.transform = `${translationY} ${scaleFactor}`;
+                    target.style.transform = '';
                     target.style.transition = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
                 }
+            });
+        });
+
+        // Reset ALL magnetic targets when cursor leaves the viewport
+        document.addEventListener('mouseleave', () => {
+            magneticTargets.forEach(target => {
+                target.magneticX = 0;
+                target.magneticY = 0;
+                target.style.transform = '';
+                target.style.transition = 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)';
             });
         });
     }
