@@ -1,0 +1,1072 @@
+/* ==========================================================================
+   AI Campus Intelligence — Premium Immersive Interface
+   Scoped under .ai- prefix to avoid Atmosphere Engine collisions
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. FLOATING AI ORB — Fixed trigger button
+   -------------------------------------------------------------------------- */
+
+.ai-orb-wrapper {
+    position: fixed;
+    bottom: 120px;
+    right: 36px;
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-orb {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(20, 22, 32, 0.9) 0%, rgba(10, 11, 16, 0.95) 100%);
+    backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(197, 168, 128, 0.25);
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(197, 168, 128, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.5s ease;
+    animation: ai-orb-breathe 4s ease-in-out infinite;
+}
+
+.ai-orb:hover {
+    transform: scale(1.12) translateY(-4px);
+    border-color: rgba(197, 168, 128, 0.45);
+    box-shadow:
+        0 12px 50px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(197, 168, 128, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.ai-orb:active {
+    transform: scale(0.95);
+    transition-duration: 0.12s;
+}
+
+.ai-orb-icon {
+    width: 28px;
+    height: 28px;
+    color: rgba(197, 168, 128, 0.85);
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.ai-orb:hover .ai-orb-icon {
+    color: rgba(197, 168, 128, 1);
+}
+
+/* Orb Glow Rings */
+.ai-orb-glow {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 168, 128, 0.12);
+    animation: ai-orb-pulse-ring 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.ai-orb-glow-outer {
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 168, 128, 0.06);
+    animation: ai-orb-pulse-ring 3s ease-in-out infinite 0.5s;
+    pointer-events: none;
+}
+
+.ai-orb-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+
+.ai-orb-wrapper:hover .ai-orb-label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hide orb when panel is open */
+.ai-panel-open .ai-orb-wrapper {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes ai-orb-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes ai-orb-pulse-ring {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.08); }
+}
+
+
+/* --------------------------------------------------------------------------
+   2. BACKDROP OVERLAY — Soft dim + blur over hero
+   -------------------------------------------------------------------------- */
+
+.ai-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 100%);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Vignette effect */
+.ai-backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. GLASS PANEL — The main intelligence panel
+   -------------------------------------------------------------------------- */
+
+.ai-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.92) translateY(40px);
+    z-index: 9600;
+    width: min(680px, 92vw);
+    max-height: min(820px, 90vh);
+    border-radius: 28px;
+    background: linear-gradient(165deg, rgba(16, 18, 28, 0.85) 0%, rgba(8, 9, 14, 0.92) 100%);
+    backdrop-filter: blur(48px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 40px 120px rgba(0, 0, 0, 0.7),
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.03),
+        0 0 100px rgba(197, 168, 128, 0.04);
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ai-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1) translateY(0);
+}
+
+/* Top shine line */
+.ai-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.3), transparent);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Inner ambient glow */
+.ai-panel::after {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 70%;
+    background: radial-gradient(ellipse at center, rgba(197, 168, 128, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. PANEL HEADER — Close button
+   -------------------------------------------------------------------------- */
+
+.ai-panel-header {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 0;
+    flex-shrink: 0;
+}
+
+.ai-panel-title-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-panel-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c5a880;
+    box-shadow: 0 0 8px rgba(197, 168, 128, 0.5);
+    animation: ai-status-pulse 2s ease-in-out infinite;
+}
+
+.ai-panel-title-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.ai-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ai-close-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.08);
+}
+
+.ai-close-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+@keyframes ai-status-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PANEL BODY — Scrollable content area
+   -------------------------------------------------------------------------- */
+
+.ai-panel-body {
+    position: relative;
+    z-index: 3;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 28px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(197, 168, 128, 0.15) transparent;
+}
+
+.ai-panel-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ai-panel-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ai-panel-body::-webkit-scrollbar-thumb {
+    background: rgba(197, 168, 128, 0.15);
+    border-radius: 4px;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. BOOT SEQUENCE — Cinematic initialization
+   -------------------------------------------------------------------------- */
+
+.ai-boot-sequence {
+    padding: 50px 0 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-height: 380px;
+    justify-content: center;
+}
+
+.ai-boot-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 6px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-boot-title.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-boot-subtitle {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.2s;
+}
+
+.ai-boot-subtitle.visible {
+    opacity: 1;
+}
+
+.ai-boot-phases {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ai-boot-phase {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-boot-phase.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-boot-phase.completed {
+    opacity: 0.45;
+}
+
+.ai-boot-phase-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+}
+
+.ai-boot-phase-check {
+    color: #c5a880;
+    font-size: 12px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ai-boot-phase.completed .ai-boot-phase-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ai-boot-progress-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    position: relative;
+}
+
+.ai-boot-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #c5a880, #d4b896);
+    box-shadow: 0 0 12px rgba(197, 168, 128, 0.35);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-boot-ready {
+    margin-top: 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c5a880;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    text-shadow: 0 0 20px rgba(197, 168, 128, 0.4);
+}
+
+.ai-boot-ready.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. WELCOME SCREEN — Greeting + suggestion chips
+   -------------------------------------------------------------------------- */
+
+.ai-welcome {
+    display: none;
+    flex-direction: column;
+    padding: 36px 0 20px;
+}
+
+.ai-welcome.active {
+    display: flex;
+}
+
+.ai-welcome-greeting {
+    font-family: 'Outfit', sans-serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.15;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-welcome-greeting.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-welcome-description {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 16px;
+    max-width: 520px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease 0.15s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+}
+
+.ai-welcome-description.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-welcome-askme {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(197, 168, 128, 0.7);
+    margin-top: 20px;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.3s;
+}
+
+.ai-welcome-askme.visible {
+    opacity: 1;
+}
+
+.ai-welcome-divider {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, #c5a880, transparent);
+    margin: 24px 0;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.2s;
+}
+
+.ai-welcome-divider.visible {
+    opacity: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   8. SUGGESTION CHIPS — Premium glassmorphic pills
+   -------------------------------------------------------------------------- */
+
+.ai-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.ai-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-chip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.ai-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.ai-chip:hover {
+    background: rgba(197, 168, 128, 0.08);
+    border-color: rgba(197, 168, 128, 0.3);
+    color: rgba(255, 255, 255, 0.92);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        0 0 24px rgba(197, 168, 128, 0.12);
+}
+
+.ai-chip:hover::before {
+    opacity: 1;
+}
+
+.ai-chip:active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.1s;
+}
+
+.ai-chip-emoji {
+    font-size: 15px;
+    line-height: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. CONVERSATION — Messages stream
+   -------------------------------------------------------------------------- */
+
+.ai-conversation {
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px 0;
+}
+
+.ai-conversation.active {
+    display: flex;
+}
+
+/* User message */
+.ai-msg-user {
+    align-self: flex-end;
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 20px 20px 6px 20px;
+    background: linear-gradient(135deg, rgba(197, 168, 128, 0.18), rgba(197, 168, 128, 0.08));
+    border: 1px solid rgba(197, 168, 128, 0.2);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.55;
+    animation: ai-msg-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* AI message */
+.ai-msg-ai {
+    align-self: flex-start;
+    max-width: 88%;
+    display: flex;
+    gap: 14px;
+    animation: ai-msg-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.ai-msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(20, 22, 32, 0.9), rgba(10, 11, 16, 0.95));
+    border: 1px solid rgba(197, 168, 128, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.ai-msg-avatar svg {
+    width: 16px;
+    height: 16px;
+    color: #c5a880;
+}
+
+.ai-msg-content {
+    padding: 14px 18px;
+    border-radius: 6px 20px 20px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.7;
+}
+
+@keyframes ai-msg-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. THINKING INDICATOR — Animated dots
+   -------------------------------------------------------------------------- */
+
+.ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 0;
+}
+
+.ai-thinking-dots {
+    display: flex;
+    gap: 5px;
+    padding: 14px 18px;
+    border-radius: 6px 20px 20px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ai-thinking-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(197, 168, 128, 0.5);
+    animation: ai-dot-bounce 1.4s ease-in-out infinite;
+}
+
+.ai-thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.ai-thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes ai-dot-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-8px); opacity: 1; }
+}
+
+
+/* --------------------------------------------------------------------------
+   11. INPUT BAR — Message input + send + voice
+   -------------------------------------------------------------------------- */
+
+.ai-input-bar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 22px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    background: rgba(8, 9, 14, 0.4);
+}
+
+.ai-input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.ai-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.ai-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.ai-input:focus {
+    border-color: rgba(197, 168, 128, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 24px rgba(197, 168, 128, 0.08);
+}
+
+.ai-send-btn,
+.ai-voice-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ai-send-btn:hover {
+    background: rgba(197, 168, 128, 0.12);
+    border-color: rgba(197, 168, 128, 0.3);
+    color: #c5a880;
+    transform: scale(1.06);
+}
+
+.ai-voice-btn:hover {
+    background: rgba(197, 168, 128, 0.12);
+    border-color: rgba(197, 168, 128, 0.3);
+    color: #c5a880;
+    transform: scale(1.06);
+}
+
+.ai-voice-btn.listening {
+    background: rgba(197, 168, 128, 0.15);
+    border-color: rgba(197, 168, 128, 0.4);
+    color: #c5a880;
+    animation: ai-voice-pulse 1.5s ease-in-out infinite;
+}
+
+.ai-send-btn svg,
+.ai-voice-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes ai-voice-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(197, 168, 128, 0.3); }
+    50% { box-shadow: 0 0 0 12px rgba(197, 168, 128, 0); }
+}
+
+/* Voice listening overlay */
+.ai-voice-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: rgba(8, 9, 14, 0.92);
+    border-radius: 28px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+.ai-voice-overlay.active {
+    display: flex;
+}
+
+.ai-voice-waveform {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(197, 168, 128, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: ai-waveform-breathe 2s ease-in-out infinite;
+}
+
+.ai-voice-waveform::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 168, 128, 0.12);
+    animation: ai-waveform-ring 2s ease-in-out infinite 0.3s;
+}
+
+.ai-voice-waveform::after {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 168, 128, 0.06);
+    animation: ai-waveform-ring 2s ease-in-out infinite 0.6s;
+}
+
+.ai-voice-waveform svg {
+    width: 40px;
+    height: 40px;
+    color: #c5a880;
+}
+
+.ai-voice-status {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(197, 168, 128, 0.8);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.ai-voice-cancel {
+    padding: 10px 24px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ai-voice-cancel:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes ai-waveform-breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(197, 168, 128, 0.1); }
+    50% { transform: scale(1.06); box-shadow: 0 0 50px rgba(197, 168, 128, 0.2); }
+}
+
+@keyframes ai-waveform-ring {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.08); opacity: 0.8; }
+}
+
+
+/* --------------------------------------------------------------------------
+   12. FUTURE CAPABILITIES PANEL
+   -------------------------------------------------------------------------- */
+
+.ai-future-panel {
+    position: relative;
+    z-index: 3;
+    padding: 18px 28px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+    background: rgba(4, 5, 8, 0.3);
+}
+
+.ai-future-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.ai-future-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.ai-future-toggle {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.ai-future-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.ai-future-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    opacity: 0;
+}
+
+.ai-future-list.expanded {
+    max-height: 200px;
+    opacity: 1;
+}
+
+.ai-future-item {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ai-future-bullet {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(197, 168, 128, 0.4);
+    flex-shrink: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   13. AMBIENT PARTICLE CANVAS
+   -------------------------------------------------------------------------- */
+
+.ai-particles-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.6;
+    mix-blend-mode: screen;
+}
+
+
+/* --------------------------------------------------------------------------
+   14. CURSOR STREAMING ANIMATION
+   -------------------------------------------------------------------------- */
+
+.ai-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #c5a880;
+    margin-left: 2px;
+    animation: ai-cursor-blink 0.8s ease-in-out infinite;
+    vertical-align: text-bottom;
+}
+
+@keyframes ai-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVE
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+    .ai-orb-wrapper {
+        bottom: 100px;
+        right: 18px;
+    }
+
+    .ai-orb {
+        width: 56px;
+        height: 56px;
+    }
+
+    .ai-panel {
+        width: 96vw;
+        max-height: 94vh;
+        border-radius: 22px;
+    }
+
+    .ai-panel-body {
+        padding: 0 18px;
+    }
+
+    .ai-welcome-greeting {
+        font-size: 28px;
+    }
+
+    .ai-welcome-description {
+        font-size: 13px;
+    }
+
+    .ai-chip {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
+    .ai-future-list {
+        grid-template-columns: 1fr;
+    }
+
+    .ai-input-bar {
+        padding: 12px 16px 14px;
+    }
+
+    .ai-input {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+
+    .ai-voice-overlay {
+        border-radius: 22px;
+    }
+}
