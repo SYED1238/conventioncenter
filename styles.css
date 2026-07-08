@@ -314,7 +314,7 @@ body {
     right: -1.5px;
     bottom: -1.5px;
     background: var(--btn-glow-gradient, linear-gradient(135deg, #ffd700, #ff9e22));
-    border-radius: 30px;
+    border-radius: inherit;
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;

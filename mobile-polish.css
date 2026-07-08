@@ -101,7 +101,7 @@
        -------------------------------------------------------------------------- */
 
     .btn {
-        border-radius: 12px;
+        border-radius: 30px;
         /* Comfortable Apple HIG minimum touch target */
         min-height: 44px;
         -webkit-tap-highlight-color: transparent;
