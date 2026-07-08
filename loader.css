@@ -1,0 +1,329 @@
+/* ==========================================================================
+   CINEMATIC LOADER — Premium College Entry Experience
+   One-time display per session. GPU-accelerated animations only.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   FULL-SCREEN CONTAINER
+   -------------------------------------------------------------------------- */
+
+.loader-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #030408;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    will-change: opacity, transform;
+}
+
+/* Exit animation */
+.loader-screen.exit {
+    animation: loaderExit 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loaderExit {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.08);
+        filter: blur(12px);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   AMBIENT BACKGROUND — Subtle radial glow
+   -------------------------------------------------------------------------- */
+
+.loader-screen::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(197, 168, 128, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: loaderGlowPulse 4s ease-in-out infinite;
+}
+
+@keyframes loaderGlowPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* Particle dust */
+.loader-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 15% 25%, rgba(197,168,128,0.2), transparent),
+        radial-gradient(1px 1px at 45% 65%, rgba(197,168,128,0.15), transparent),
+        radial-gradient(1px 1px at 75% 35%, rgba(197,168,128,0.12), transparent),
+        radial-gradient(1px 1px at 85% 75%, rgba(197,168,128,0.18), transparent),
+        radial-gradient(1px 1px at 25% 85%, rgba(197,168,128,0.14), transparent),
+        radial-gradient(1px 1px at 55% 15%, rgba(197,168,128,0.16), transparent),
+        radial-gradient(1px 1px at 35% 45%, rgba(197,168,128,0.1), transparent),
+        radial-gradient(1px 1px at 65% 55%, rgba(197,168,128,0.13), transparent);
+    pointer-events: none;
+    animation: loaderDust 8s ease-in-out infinite alternate;
+}
+
+@keyframes loaderDust {
+    0%   { opacity: 0.3; transform: translateY(0); }
+    100% { opacity: 0.7; transform: translateY(-8px); }
+}
+
+/* --------------------------------------------------------------------------
+   SEAL CONTAINER — Animated ring drawing
+   -------------------------------------------------------------------------- */
+
+.loader-seal {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 36px;
+    opacity: 0;
+    transform: scale(0.7);
+    animation: loaderSealIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+}
+
+@keyframes loaderSealIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.loader-seal svg {
+    width: 100%;
+    height: 100%;
+    color: #c5a880;
+    filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.2));
+}
+
+/* SVG stroke-draw animation */
+.loader-seal svg circle,
+.loader-seal svg path,
+.loader-seal svg polygon {
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    animation: loaderStrokeDraw 2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+
+@keyframes loaderStrokeDraw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Seal breathing glow */
+.loader-seal::after {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 168, 128, 0.08);
+    animation: loaderSealRing 3s ease-in-out infinite 1s;
+}
+
+@keyframes loaderSealRing {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50%      { transform: scale(1.1); opacity: 0.6; }
+}
+
+/* --------------------------------------------------------------------------
+   COLLEGE NAME — Letter-by-letter reveal
+   -------------------------------------------------------------------------- */
+
+.loader-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 500;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.loader-title span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: loaderLetterIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes loaderLetterIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loader-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: loaderFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+    margin-bottom: 48px;
+}
+
+@keyframes loaderFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   PROGRESS BAR — Gold gradient fill
+   -------------------------------------------------------------------------- */
+
+.loader-progress-wrapper {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: loaderFadeUp 0.5s ease 1.4s forwards;
+}
+
+.loader-progress-track {
+    width: 100%;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #c5a880, #d4b896, #c5a880);
+    background-size: 200% 100%;
+    box-shadow: 0 0 16px rgba(197, 168, 128, 0.35);
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    animation: loaderShimmer 2s linear infinite;
+}
+
+@keyframes loaderShimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Glowing tip on the progress bar */
+.loader-progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 8px;
+    height: 9px;
+    border-radius: 50%;
+    background: #c5a880;
+    box-shadow: 0 0 12px rgba(197, 168, 128, 0.6), 0 0 24px rgba(197, 168, 128, 0.3);
+    opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   STATUS TEXT — Cycling messages
+   -------------------------------------------------------------------------- */
+
+.loader-status {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    min-height: 14px;
+    transition: opacity 0.3s ease;
+}
+
+.loader-status.changing {
+    opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   BOTTOM META — Established + Affiliation
+   -------------------------------------------------------------------------- */
+
+.loader-meta {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.18);
+    white-space: nowrap;
+    opacity: 0;
+    animation: loaderFadeUp 0.5s ease 1.8s forwards;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .loader-seal {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 28px;
+    }
+
+    .loader-title {
+        font-size: 30px;
+        letter-spacing: 7px;
+    }
+
+    .loader-subtitle {
+        font-size: 11px;
+        letter-spacing: 2px;
+        margin-bottom: 40px;
+    }
+
+    .loader-progress-wrapper {
+        width: 200px;
+    }
+
+    .loader-meta {
+        bottom: max(28px, env(safe-area-inset-bottom, 28px));
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 390px) {
+    .loader-title {
+        font-size: 26px;
+        letter-spacing: 5px;
+    }
+
+    .loader-progress-wrapper {
+        width: 170px;
+    }
+}
