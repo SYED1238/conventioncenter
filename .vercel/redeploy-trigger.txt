@@ -1,0 +1,4 @@
+trigger redeploy
+
+Created by GitHub Copilot assistant to trigger Vercel redeploy.
+Timestamp: 2026-07-09T00:00:00Z
