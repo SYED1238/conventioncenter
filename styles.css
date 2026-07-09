@@ -10,13 +10,13 @@
     --clr-text-tertiary: rgba(255, 255, 255, 0.45);
 
     /* Weather Ambient Glows */
-    --glow-clear: radial-gradient(circle, rgba(255, 170, 50, 0.30) 0%, rgba(255, 170, 50, 0) 70%);
-    --glow-rain: radial-gradient(circle, rgba(100, 190, 255, 0.30) 0%, rgba(100, 190, 255, 0) 70%);
+    --glow-clear: radial-gradient(circle, rgba(223, 166, 74, 0.15) 0%, rgba(223, 166, 74, 0) 70%);
+    --glow-rain: radial-gradient(circle, rgba(130, 185, 242, 0.15) 0%, rgba(130, 185, 242, 0) 70%);
     --glow-night: radial-gradient(circle, rgba(153, 102, 255, 0.30) 0%, rgba(153, 102, 255, 0) 70%);
 
     /* Active Button Highlights */
-    --accent-clear: #ffaa32;
-    --accent-rain: #64beff;
+    --accent-clear: #DFA64A;
+    --accent-rain: #82B9F2;
     --accent-night: #9966ff;
 
     /* Font Families */
@@ -150,26 +150,26 @@ body {
 /* Weather-Responsive Plaque Themes */
 .identity-panel[data-weather="clear"] {
     background: linear-gradient(135deg, rgba(20, 18, 14, 0.65) 0%, rgba(8, 9, 13, 0.85) 100%);
-    border-color: rgba(255, 170, 50, 0.12);
+    border-color: rgba(223, 166, 74, 0.12);
 }
 
 .identity-panel[data-weather="clear"]:hover {
     box-shadow:
         0 32px 80px rgba(0, 0, 0, 0.65),
-        0 0 30px rgba(255, 170, 50, 0.14),
+        0 0 30px rgba(223, 166, 74, 0.14),
         inset 0 1px 1px rgba(255, 255, 255, 0.18),
         inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
 
 .identity-panel[data-weather="rain"] {
     background: linear-gradient(135deg, rgba(14, 18, 22, 0.65) 0%, rgba(7, 8, 11, 0.85) 100%);
-    border-color: rgba(100, 190, 255, 0.12);
+    border-color: rgba(130, 185, 242, 0.12);
 }
 
 .identity-panel[data-weather="rain"]:hover {
     box-shadow:
         0 32px 80px rgba(0, 0, 0, 0.65),
-        0 0 30px rgba(100, 190, 255, 0.14),
+        0 0 30px rgba(130, 185, 242, 0.14),
         inset 0 1px 1px rgba(255, 255, 255, 0.18),
         inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
@@ -348,18 +348,18 @@ body {
 }
 
 .hero-section[data-weather="clear"] .btn-primary {
-    --btn-glow-gradient: linear-gradient(135deg, #ffd700 0%, #ff9e22 100%);
-    --btn-hover-shadow: 0 8px 25px rgba(255, 158, 34, 0.42);
+    --btn-glow-gradient: linear-gradient(135deg, #ffffff 0%, #DFA64A 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(223, 166, 74, 0.25);
 }
 
 .hero-section[data-weather="rain"] .btn-primary {
-    --btn-glow-gradient: linear-gradient(135deg, #aae2ff 0%, #3a8dff 100%);
-    --btn-hover-shadow: 0 8px 25px rgba(58, 141, 255, 0.42);
+    --btn-glow-gradient: linear-gradient(135deg, #ffffff 0%, #82B9F2 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(130, 185, 242, 0.20);
 }
 
 .hero-section[data-weather="night"] .btn-primary {
-    --btn-glow-gradient: linear-gradient(135deg, #dfff9e 0%, #b4f56e 100%);
-    --btn-hover-shadow: 0 8px 25px rgba(180, 245, 110, 0.45);
+    --btn-glow-gradient: linear-gradient(135deg, #ffffff 0%, #BEEA63 100%);
+    --btn-hover-shadow: 0 8px 25px rgba(190, 234, 99, 0.20);
 }
 
 .btn-primary:hover::before {
@@ -434,13 +434,13 @@ body {
 }
 
 .hero-section[data-weather="rain"] .btn-outline {
-    --btn-glow-alpha: rgba(79, 168, 255, 0.15);
-    --btn-outline-glow: rgba(79, 168, 255, 0.55);
+    --btn-glow-alpha: rgba(130, 185, 242, 0.08);
+    --btn-outline-glow: rgba(130, 185, 242, 0.3);
 }
 
 .hero-section[data-weather="night"] .btn-outline {
-    --btn-glow-alpha: rgba(180, 245, 110, 0.18);
-    --btn-outline-glow: rgba(180, 245, 110, 0.6);
+    --btn-glow-alpha: rgba(190, 234, 99, 0.08);
+    --btn-outline-glow: rgba(190, 234, 99, 0.3);
 }
 
 .btn-outline:hover::after {
@@ -630,8 +630,8 @@ body {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #ffaa32;
-    box-shadow: 0 0 8px #ffaa32;
+    background: #DFA64A;
+    box-shadow: 0 0 8px #DFA64A;
     display: inline-block;
 }
 
@@ -970,7 +970,7 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.18),
         inset 0 -1px 0 rgba(255, 255, 255, 0.04),
         0 8px 24px rgba(0, 0, 0, 0.25),
-        0 0 20px rgba(255, 170, 50, 0.12);
+        0 0 20px rgba(223, 166, 74, 0.12);
 }
 
 .weather-controller-container[data-active-weather="rain"] .active-pill-tracker {
@@ -978,7 +978,7 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.18),
         inset 0 -1px 0 rgba(255, 255, 255, 0.04),
         0 8px 24px rgba(0, 0, 0, 0.25),
-        0 0 20px rgba(100, 190, 255, 0.12);
+        0 0 20px rgba(130, 185, 242, 0.12);
 }
 
 .weather-controller-container[data-active-weather="night"] .active-pill-tracker {
@@ -1111,17 +1111,17 @@ body {
 
 /* Individual Mode Accent Styles */
 .weather-controller-container[data-active-weather="clear"] .weather-btn.active .weather-btn-icon-wrapper {
-    background: rgba(255, 170, 50, 0.12);
-    border-color: rgba(255, 170, 50, 0.3);
+    background: rgba(223, 166, 74, 0.12);
+    border-color: rgba(223, 166, 74, 0.3);
     color: var(--accent-clear);
-    box-shadow: 0 0 16px rgba(255, 170, 50, 0.2);
+    box-shadow: 0 0 16px rgba(223, 166, 74, 0.2);
 }
 
 .weather-controller-container[data-active-weather="rain"] .weather-btn.active .weather-btn-icon-wrapper {
-    background: rgba(100, 190, 255, 0.12);
-    border-color: rgba(100, 190, 255, 0.3);
+    background: rgba(130, 185, 242, 0.12);
+    border-color: rgba(130, 185, 242, 0.3);
     color: var(--accent-rain);
-    box-shadow: 0 0 16px rgba(100, 190, 255, 0.2);
+    box-shadow: 0 0 16px rgba(130, 185, 242, 0.2);
 }
 
 .weather-controller-container[data-active-weather="night"] .weather-btn.active .weather-btn-icon-wrapper {
@@ -1160,7 +1160,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    border: 1px solid rgba(255, 170, 50, 0.3);
+    border: 1px solid rgba(223, 166, 74, 0.3);
     animation: sunRaysPulse 2.5s ease-out infinite;
 }
 
@@ -1371,11 +1371,11 @@ body {
 }
 
 .weather-controller-container[data-active-weather="clear"] .weather-btn.active::before {
-    border-color: rgba(255, 170, 50, 0.4);
+    border-color: rgba(223, 166, 74, 0.4);
 }
 
 .weather-controller-container[data-active-weather="rain"] .weather-btn.active::before {
-    border-color: rgba(100, 190, 255, 0.4);
+    border-color: rgba(130, 185, 242, 0.4);
 }
 
 .weather-controller-container[data-active-weather="night"] .weather-btn.active::before {
@@ -1984,8 +1984,8 @@ body {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #ffaa32;
-    box-shadow: 0 0 6px #ffaa32;
+    background: #DFA64A;
+    box-shadow: 0 0 6px #DFA64A;
     transition: background 0.8s ease, box-shadow 0.8s ease;
 }
 
@@ -2215,12 +2215,12 @@ body {
     background: radial-gradient(
         circle 180px at var(--text-mx, 50%) var(--text-my, 50%),
         #ffffff 0%,
-        #dfff9e 50%,
-        #b4f56e 100%
+        #f1ffd6 50%,
+        #BEEA63 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 12px rgba(180, 245, 110, 0.55)) drop-shadow(0 0 25px rgba(180, 245, 110, 0.2));
+    filter: drop-shadow(0 0 8px rgba(190, 234, 99, 0.08)) drop-shadow(0 0 16px rgba(190, 234, 99, 0.04));
     animation: night-flicker-start 1.4s ease-out forwards, night-text-pulse 4s ease-in-out infinite alternate 1.4s;
 }
 
@@ -2236,11 +2236,11 @@ body {
 @keyframes night-flicker-start {
     0%, 18%, 22%, 25%, 53%, 57%, 100% {
         opacity: 1;
-        filter: drop-shadow(0 0 12px rgba(180, 245, 110, 0.6)) drop-shadow(0 0 25px rgba(180, 245, 110, 0.2));
+        filter: drop-shadow(0 0 8px rgba(190, 234, 99, 0.08)) drop-shadow(0 0 16px rgba(190, 234, 99, 0.04));
     }
     20%, 24%, 55% {
         opacity: 0.3;
-        filter: drop-shadow(0 0 2px rgba(180, 245, 110, 0.1));
+        filter: drop-shadow(0 0 2px rgba(190, 234, 99, 0.02));
     }
 }
 
@@ -2258,10 +2258,10 @@ body {
 /* Luminous Breathing/Twinkling Ambient Pulsing */
 @keyframes night-text-pulse {
     0% {
-        filter: drop-shadow(0 0 8px rgba(180, 245, 110, 0.45)) drop-shadow(0 0 18px rgba(180, 245, 110, 0.15));
+        filter: drop-shadow(0 0 6px rgba(190, 234, 99, 0.06)) drop-shadow(0 0 12px rgba(190, 234, 99, 0.03));
     }
     100% {
-        filter: drop-shadow(0 0 18px rgba(180, 245, 110, 0.8)) drop-shadow(0 0 35px rgba(180, 245, 110, 0.35));
+        filter: drop-shadow(0 0 12px rgba(190, 234, 99, 0.12)) drop-shadow(0 0 24px rgba(190, 234, 99, 0.06));
     }
 }
 
@@ -2295,17 +2295,17 @@ body {
 .hero-section[data-weather="rain"] .hero-title .text-gradient {
     background: linear-gradient(
         to bottom,
-        #3a8dff 0%,
-        #8cc4ff 25%,
-        #4fa8ff 50%,
-        #aae2ff 75%,
-        #3a8dff 100%
+        #5993cf 0%,
+        #d2e5fc 25%,
+        #82B9F2 50%,
+        #d2e5fc 75%,
+        #5993cf 100%
     );
     background-size: 100% 200%;
     background-position-y: 0%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px rgba(79, 168, 255, 0.65)) drop-shadow(0 0 20px rgba(79, 168, 255, 0.3));
+    filter: drop-shadow(0 0 8px rgba(130, 185, 242, 0.08)) drop-shadow(0 0 16px rgba(130, 185, 242, 0.04));
     animation: rain-droplet-slide 6s linear infinite;
 }
 
@@ -2360,12 +2360,12 @@ body {
     background: radial-gradient(
         circle 180px at var(--text-mx, 50%) var(--text-my, 50%),
         #ffffff 0%,
-        #ffe79a 50%,
-        #ff9e22 100%
+        #f5dfbb 50%,
+        #DFA64A 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px rgba(255, 158, 34, 0.45));
+    filter: drop-shadow(0 0 8px rgba(223, 166, 74, 0.12));
     animation: clear-text-shimmer 5s ease-in-out infinite alternate;
 }
 
@@ -2380,15 +2380,15 @@ body {
 /* Solar Flare Shimmers */
 @keyframes clear-text-shimmer {
     0% {
-        filter: drop-shadow(0 0 8px rgba(255, 158, 34, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+        filter: drop-shadow(0 0 6px rgba(223, 166, 74, 0.08)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
         transform: translateY(0);
     }
     50% {
-        filter: drop-shadow(0 0 16px rgba(255, 158, 34, 0.65)) drop-shadow(0 4px 8px rgba(255, 158, 34, 0.25));
+        filter: drop-shadow(0 0 12px rgba(223, 166, 74, 0.18)) drop-shadow(0 4px 8px rgba(223, 166, 74, 0.05));
         transform: translateY(0.5px);
     }
     100% {
-        filter: drop-shadow(0 0 10px rgba(255, 158, 34, 0.45)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+        filter: drop-shadow(0 0 8px rgba(223, 166, 74, 0.12)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
         transform: translateY(-0.5px);
     }
 }
