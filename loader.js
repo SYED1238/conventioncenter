@@ -128,6 +128,9 @@
         function exitLoader() {
             screen.classList.add('exit');
 
+            // Notify app.js that loader is done — triggers cinematic audio welcome
+            document.dispatchEvent(new CustomEvent('gce:loaderDone'));
+
             // Remove from DOM after animation finishes
             screen.addEventListener('animationend', () => {
                 screen.remove();

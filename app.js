@@ -2129,6 +2129,111 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     }
 
+    // -------------------------------------------------------------------------
+    // AUTO-START AUDIO — Cinematic Welcome Experience
+
+    // Fires when the cinematic loader exits (counts as user gesture context).
+    // Plays a beautiful welcome chord then fades in the ambient atmosphere.
+    // -------------------------------------------------------------------------
+    function playCinematicWelcomeChord() {
+        // Initialize audio engine on first call
+        if (!state.audioInitialized) {
+            initAudioEngine();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        // --- Cinematic Orchestral Welcome Chord ---
+        // A warm, rich ascending arpeggio (A major chord with shimmer)
+        const notes = [
+            { freq: 220.0,  start: 0.0,  dur: 3.5, gain: 0.06 },  // A3 — root deep bass
+            { freq: 277.18, start: 0.12, dur: 3.2, gain: 0.05 },  // C#4
+            { freq: 329.63, start: 0.24, dur: 3.0, gain: 0.05 },  // E4
+            { freq: 440.0,  start: 0.38, dur: 2.8, gain: 0.04 },  // A4 — octave rise
+            { freq: 554.37, start: 0.52, dur: 2.6, gain: 0.035 }, // C#5 shimmer
+            { freq: 659.25, start: 0.66, dur: 2.2, gain: 0.03 },  // E5 sparkle
+            { freq: 880.0,  start: 0.82, dur: 1.8, gain: 0.02 },  // A5 — golden high note
+        ];
+
+        // Reverb-style convolver: simple delay feedback tail
+        const reverbDelay = audioCtx.createDelay(0.6);
+        reverbDelay.delayTime.value = 0.28;
+        const reverbFeedback = audioCtx.createGain();
+        reverbFeedback.gain.value = 0.22;
+        const reverbDry = audioCtx.createGain();
+        reverbDry.gain.value = 0.75;
+        reverbDelay.connect(reverbFeedback);
+        reverbFeedback.connect(reverbDelay);
+        reverbDelay.connect(audioCtx.destination);
+        reverbDry.connect(audioCtx.destination);
+
+        notes.forEach(({ freq, start, dur, gain: gainVal }) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const harmOsc = audioCtx.createOscillator(); // subtle harmonic shimmer
+            const harmGain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + start);
+
+            harmOsc.type = 'sine';
+            harmOsc.frequency.setValueAtTime(freq * 2.001, now + start); // slight detune octave
+            harmGain.gain.setValueAtTime(gainVal * 0.25, now + start);
+            harmGain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+
+            gainNode.gain.setValueAtTime(0.0001, now + start);
+            gainNode.gain.linearRampToValueAtTime(gainVal, now + start + 0.15);  // attack
+            gainNode.gain.setValueAtTime(gainVal, now + start + dur * 0.5);      // sustain
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + start + dur); // release
+
+            osc.connect(gainNode);
+            harmOsc.connect(harmGain);
+            gainNode.connect(reverbDry);
+            gainNode.connect(reverbDelay);
+            harmGain.connect(reverbDry);
+
+            osc.start(now + start);
+            osc.stop(now + start + dur + 0.1);
+            harmOsc.start(now + start);
+            harmOsc.stop(now + start + dur + 0.1);
+        });
+
+        // --- After chord settles (~1.8s), fade in ambient atmosphere ---
+        setTimeout(() => {
+            state.audioEnabled = true;
+            audioWidget.classList.add('playing');
+            audioStatusText.innerText = '🎵 Atmosphere ON';
+            fadeAudioToMode(state.weather, 1.8); // soft 1.8s fade-in
+        }, 1800);
+    }
+
+    // Listen for loader exit event → play welcome + auto-start ambient
+    document.addEventListener('gce:loaderDone', () => {
+        // Small delay so loader exit animation begins first
+        setTimeout(playCinematicWelcomeChord, 300);
+    }, { once: true });
+
+    // Fallback: if loader was skipped (return visit), auto-start on first interaction
+    let autoStartFallbackDone = false;
+    function autoStartFallback() {
+        if (autoStartFallbackDone || state.audioEnabled) return;
+        autoStartFallbackDone = true;
+        document.removeEventListener('click', autoStartFallback);
+        document.removeEventListener('touchstart', autoStartFallback);
+        // Small delay — feels intentional, not abrupt
+        setTimeout(playCinematicWelcomeChord, 200);
+    }
+
+    // Only register fallback if the loader is NOT showing (i.e. return visit)
+    if (sessionStorage.getItem('gce_loader_seen')) {
+        document.addEventListener('click', autoStartFallback, { once: true });
+        document.addEventListener('touchstart', autoStartFallback, { once: true });
+    }
+
     // Execute setup!
     initialize();
 });

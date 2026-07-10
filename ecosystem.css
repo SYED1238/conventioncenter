@@ -1,0 +1,844 @@
+/* ==========================================================================
+   Digital Campus Ecosystem — Portal Presentation System
+   Scoped under .eco- prefix to avoid collisions with existing stylesheets
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. PORTALS TRIGGER BUTTON — Fixed floating glass pill
+   -------------------------------------------------------------------------- */
+
+.eco-trigger {
+    position: fixed;
+    top: 28px;
+    left: 48px;
+    z-index: 8000;
+}
+
+.eco-trigger-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 18px 10px 14px;
+    border-radius: 100px;
+    background: rgba(8, 10, 18, 0.5);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+.eco-trigger-btn:hover {
+    background: rgba(12, 14, 22, 0.65);
+    border-color: rgba(197, 168, 128, 0.25);
+    transform: translateY(-2px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        0 0 20px rgba(197, 168, 128, 0.06),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.eco-trigger-btn:active {
+    transform: scale(0.96);
+    transition-duration: 0.1s;
+}
+
+.eco-trigger-btn.active {
+    background: rgba(12, 14, 22, 0.7);
+    border-color: rgba(197, 168, 128, 0.3);
+}
+
+.eco-trigger-icon {
+    width: 16px;
+    height: 16px;
+    color: rgba(197, 168, 128, 0.8);
+    flex-shrink: 0;
+    transition: color 0.3s ease;
+}
+
+.eco-trigger-btn:hover .eco-trigger-icon {
+    color: #c5a880;
+}
+
+.eco-trigger-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.eco-trigger-btn:hover .eco-trigger-text {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. PORTALS POPUP — Glass dropdown with 3 options
+   -------------------------------------------------------------------------- */
+
+.eco-popup {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    width: 300px;
+    border-radius: 20px;
+    background: linear-gradient(165deg, rgba(16, 18, 28, 0.88) 0%, rgba(8, 9, 14, 0.95) 100%);
+    backdrop-filter: blur(48px) saturate(220%);
+    -webkit-backdrop-filter: blur(48px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.6),
+        0 8px 24px rgba(0, 0, 0, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.03);
+    padding: 8px;
+
+    /* Animation entry */
+    opacity: 0;
+    transform: scale(0.92) translateY(-8px);
+    transform-origin: top left;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Top shine line */
+.eco-popup::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.25), transparent);
+    pointer-events: none;
+    border-radius: 1px;
+}
+
+.eco-popup.active {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+/* Individual portal option */
+.eco-popup-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid transparent;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    font-family: inherit;
+}
+
+.eco-popup-item:hover {
+    background: rgba(197, 168, 128, 0.06);
+    border-color: rgba(197, 168, 128, 0.12);
+    transform: translateX(4px);
+}
+
+.eco-popup-item:active {
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+}
+
+.eco-popup-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(197, 168, 128, 0.08);
+    border: 1px solid rgba(197, 168, 128, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.eco-popup-item:hover .eco-popup-item-icon {
+    background: rgba(197, 168, 128, 0.12);
+    border-color: rgba(197, 168, 128, 0.25);
+    box-shadow: 0 0 16px rgba(197, 168, 128, 0.1);
+}
+
+.eco-popup-item-icon svg {
+    width: 18px;
+    height: 18px;
+    color: rgba(197, 168, 128, 0.8);
+}
+
+.eco-popup-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.eco-popup-item-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.88);
+    letter-spacing: 0.2px;
+}
+
+.eco-popup-item-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Divider between items */
+.eco-popup-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 2px 14px;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. FULLSCREEN MODAL — Overlay backdrop
+   -------------------------------------------------------------------------- */
+
+.eco-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eco-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. FULLSCREEN MODAL — Scroll container
+   -------------------------------------------------------------------------- */
+
+.eco-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #030408 0%, #060810 50%, #030408 100%);
+
+    /* Animation entry */
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Premium scrollbar */
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(197, 168, 128, 0.15) transparent;
+}
+
+.eco-modal::-webkit-scrollbar { width: 4px; }
+.eco-modal::-webkit-scrollbar-track { background: transparent; }
+.eco-modal::-webkit-scrollbar-thumb {
+    background: rgba(197, 168, 128, 0.15);
+    border-radius: 4px;
+}
+
+.eco-modal.active {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. MODAL CLOSE BUTTON
+   -------------------------------------------------------------------------- */
+
+.eco-modal-close {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10002;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(8, 10, 18, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: scale(0.8);
+    outline: none;
+}
+
+.eco-modal-close.active {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.3s;
+}
+
+.eco-modal-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.08);
+}
+
+.eco-modal-close:active {
+    transform: scale(0.95);
+    transition-duration: 0.1s;
+}
+
+.eco-modal-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. MODAL INNER CONTENT WRAPPER
+   -------------------------------------------------------------------------- */
+
+.eco-modal-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. MODAL HERO — Large cinematic heading
+   -------------------------------------------------------------------------- */
+
+.eco-m-hero {
+    text-align: center;
+    padding: 80px 0 100px;
+    position: relative;
+}
+
+/* Badge pill */
+.eco-m-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    background: rgba(197, 168, 128, 0.06);
+    border: 1px solid rgba(197, 168, 128, 0.15);
+    margin-bottom: 32px;
+}
+
+.eco-m-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c5a880;
+    box-shadow: 0 0 8px rgba(197, 168, 128, 0.5);
+    animation: eco-dot-pulse 2s ease-in-out infinite;
+}
+
+.eco-m-badge-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(197, 168, 128, 0.7);
+}
+
+/* Hero title */
+.eco-m-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    color: #ffffff;
+    margin-bottom: 24px;
+}
+
+.eco-m-hero-title span {
+    background: linear-gradient(135deg, #c5a880 0%, #e8d5b8 50%, #c5a880 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Hero subtitle */
+.eco-m-hero-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.45);
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+/* Ambient glow behind hero */
+.eco-m-hero::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(197, 168, 128, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes eco-dot-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+
+/* --------------------------------------------------------------------------
+   8. MODAL SECTIONS — Generic content block
+   -------------------------------------------------------------------------- */
+
+.eco-m-section {
+    padding: 56px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.eco-m-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(197, 168, 128, 0.55);
+    margin-bottom: 14px;
+}
+
+.eco-m-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 14px;
+}
+
+.eco-m-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.45);
+    max-width: 620px;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. GLASS CARDS GRID — Dashboard widgets, features, future items
+   -------------------------------------------------------------------------- */
+
+.eco-m-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 32px;
+}
+
+.eco-m-cards.cols-2 {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.eco-m-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(16, 18, 28, 0.55) 0%, rgba(8, 9, 14, 0.75) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.eco-m-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(197, 168, 128, 0.12);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 16px rgba(197, 168, 128, 0.04);
+}
+
+.eco-m-card-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+    display: block;
+    line-height: 1;
+}
+
+.eco-m-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.88);
+    margin-bottom: 4px;
+}
+
+.eco-m-card-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* --------------------------------------------------------------------------
+   10. TIMELINE — Vertical workflow steps
+   -------------------------------------------------------------------------- */
+
+.eco-m-timeline {
+    position: relative;
+    padding-left: 44px;
+    margin-top: 32px;
+}
+
+/* Vertical connecting line */
+.eco-m-timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(197, 168, 128, 0.3), rgba(197, 168, 128, 0.05));
+    border-radius: 2px;
+}
+
+.eco-m-step {
+    position: relative;
+    padding-bottom: 28px;
+}
+
+.eco-m-step:last-child { padding-bottom: 0; }
+
+/* Dot on the timeline */
+.eco-m-step-dot {
+    position: absolute;
+    left: -44px;
+    top: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(197, 168, 128, 0.08);
+    border: 2px solid rgba(197, 168, 128, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eco-m-step-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c5a880;
+    box-shadow: 0 0 8px rgba(197, 168, 128, 0.4);
+}
+
+.eco-m-step-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 3px;
+}
+
+.eco-m-step-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.38);
+    line-height: 1.6;
+}
+
+
+/* --------------------------------------------------------------------------
+   11. CHAT — AI conversation demo bubbles
+   -------------------------------------------------------------------------- */
+
+.eco-m-chat {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 520px;
+}
+
+.eco-m-chat-user {
+    align-self: flex-end;
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 20px 20px 6px 20px;
+    background: linear-gradient(135deg, rgba(197, 168, 128, 0.15), rgba(197, 168, 128, 0.06));
+    border: 1px solid rgba(197, 168, 128, 0.18);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.5;
+}
+
+.eco-m-chat-ai {
+    align-self: flex-start;
+    max-width: 88%;
+    padding: 16px 20px;
+    border-radius: 6px 20px 20px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+}
+
+.eco-m-chat-ai-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(197, 168, 128, 0.55);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.eco-m-chat-ai-tag::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #c5a880;
+    box-shadow: 0 0 6px rgba(197, 168, 128, 0.5);
+}
+
+
+/* --------------------------------------------------------------------------
+   12. FEATURE PILLS — Compact tag capsules
+   -------------------------------------------------------------------------- */
+
+.eco-m-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.eco-m-pill {
+    padding: 7px 15px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.eco-m-pill:hover {
+    background: rgba(197, 168, 128, 0.06);
+    border-color: rgba(197, 168, 128, 0.18);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+
+/* --------------------------------------------------------------------------
+   13. CTA — Closing call to action
+   -------------------------------------------------------------------------- */
+
+.eco-m-cta {
+    text-align: center;
+    padding: 80px 0 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.eco-m-cta-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 10px;
+}
+
+.eco-m-cta-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* --------------------------------------------------------------------------
+   14. SCROLL REVEAL — Intersection Observer animation
+   -------------------------------------------------------------------------- */
+
+.eco-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eco-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered card reveals */
+.eco-reveal-stagger .eco-m-card,
+.eco-reveal-stagger .eco-m-step,
+.eco-reveal-stagger .eco-m-chat-user,
+.eco-reveal-stagger .eco-m-chat-ai,
+.eco-reveal-stagger .eco-m-pill {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eco-reveal-stagger.visible .eco-m-card,
+.eco-reveal-stagger.visible .eco-m-step,
+.eco-reveal-stagger.visible .eco-m-chat-user,
+.eco-reveal-stagger.visible .eco-m-chat-ai,
+.eco-reveal-stagger.visible .eco-m-pill {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger delays for first 14 children */
+.eco-reveal-stagger.visible > :nth-child(1) { transition-delay: 0.04s; }
+.eco-reveal-stagger.visible > :nth-child(2) { transition-delay: 0.08s; }
+.eco-reveal-stagger.visible > :nth-child(3) { transition-delay: 0.12s; }
+.eco-reveal-stagger.visible > :nth-child(4) { transition-delay: 0.16s; }
+.eco-reveal-stagger.visible > :nth-child(5) { transition-delay: 0.20s; }
+.eco-reveal-stagger.visible > :nth-child(6) { transition-delay: 0.24s; }
+.eco-reveal-stagger.visible > :nth-child(7) { transition-delay: 0.28s; }
+.eco-reveal-stagger.visible > :nth-child(8) { transition-delay: 0.32s; }
+.eco-reveal-stagger.visible > :nth-child(9) { transition-delay: 0.36s; }
+.eco-reveal-stagger.visible > :nth-child(10) { transition-delay: 0.40s; }
+.eco-reveal-stagger.visible > :nth-child(11) { transition-delay: 0.44s; }
+.eco-reveal-stagger.visible > :nth-child(12) { transition-delay: 0.48s; }
+.eco-reveal-stagger.visible > :nth-child(13) { transition-delay: 0.52s; }
+.eco-reveal-stagger.visible > :nth-child(14) { transition-delay: 0.56s; }
+
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVE — Tablet + Mobile
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1200px) {
+    .eco-trigger { left: 32px; }
+}
+
+@media (max-width: 768px) {
+    /* Move trigger to bottom-left on mobile (avoids top badges) */
+    .eco-trigger {
+        top: auto;
+        bottom: 76px;
+        left: 16px;
+    }
+
+    /* Popup opens upward on mobile */
+    .eco-popup {
+        width: 260px;
+        top: auto;
+        bottom: calc(100% + 12px);
+        transform-origin: bottom left;
+    }
+
+    .eco-popup:not(.active) {
+        transform: scale(0.92) translateY(8px);
+    }
+
+    .eco-modal-inner {
+        padding: 40px 20px 80px;
+    }
+
+    .eco-m-hero { padding: 50px 0 60px; }
+
+    .eco-m-hero-title {
+        font-size: 34px;
+        letter-spacing: -0.8px;
+    }
+
+    .eco-m-hero-desc {
+        font-size: 15px;
+    }
+
+    .eco-m-title {
+        font-size: 26px;
+    }
+
+    .eco-m-desc {
+        font-size: 14px;
+    }
+
+    .eco-m-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .eco-m-cards.cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .eco-modal-close {
+        top: 16px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .eco-m-chat { max-width: 100%; }
+}
+
+@media (max-width: 390px) {
+    .eco-m-hero-title {
+        font-size: 28px;
+    }
+
+    .eco-m-title {
+        font-size: 24px;
+    }
+
+    .eco-popup {
+        width: 240px;
+    }
+}
