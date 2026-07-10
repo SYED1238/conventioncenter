@@ -19,7 +19,9 @@
         faculty: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="17" y2="7"/><line x1="9" y1="11" x2="14" y2="11"/></svg>`,
         admin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>`,
         close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-        chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`
+        chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+        themeSun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        themeMoon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
     };
 
 
@@ -486,7 +488,9 @@
     let activeModal = null;
     let activeOverlay = null;
     let activeCloseBtn = null;
+    let activeThemeBtn = null;
     let scrollObserver = null;
+    let isLightTheme = false;
 
     function openModal(portalKey) {
         // Prevent duplicate modals
@@ -513,6 +517,26 @@
         activeCloseBtn.addEventListener('click', closeModal);
         document.body.appendChild(activeCloseBtn);
 
+        // Create theme toggle button (draggable)
+        activeThemeBtn = el('button', 'eco-theme-toggle');
+        activeThemeBtn.id = 'eco-theme-toggle';
+        activeThemeBtn.setAttribute('aria-label', 'Toggle light/dark theme');
+        activeThemeBtn.innerHTML = `
+            <span class="eco-theme-icon eco-theme-icon--sun">${ICONS.themeSun}</span>
+            <span class="eco-theme-icon eco-theme-icon--moon">${ICONS.themeMoon}</span>
+            <span class="eco-theme-label">Light</span>
+        `;
+        activeThemeBtn.addEventListener('click', togglePortalTheme);
+        document.body.appendChild(activeThemeBtn);
+        makeDraggable(activeThemeBtn);
+
+        // Apply saved theme state
+        if (isLightTheme) {
+            activeModal.classList.add('eco-light');
+            activeThemeBtn.classList.add('eco-light-active');
+            activeThemeBtn.querySelector('.eco-theme-label').textContent = 'Dark';
+        }
+
         // Lock body scroll
         document.body.style.overflow = 'hidden';
 
@@ -522,6 +546,7 @@
                 activeOverlay.classList.add('active');
                 activeModal.classList.add('active');
                 activeCloseBtn.classList.add('active');
+                activeThemeBtn.classList.add('active');
             });
         });
 
@@ -539,6 +564,7 @@
         if (activeOverlay) activeOverlay.classList.remove('active');
         if (activeModal) activeModal.classList.remove('active');
         if (activeCloseBtn) activeCloseBtn.classList.remove('active');
+        if (activeThemeBtn) activeThemeBtn.classList.remove('active');
 
         // Destroy observer
         if (scrollObserver) {
@@ -550,16 +576,19 @@
         const overlay = activeOverlay;
         const modal = activeModal;
         const closeBtn = activeCloseBtn;
+        const themeBtn = activeThemeBtn;
 
         setTimeout(() => {
             if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
             if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
             if (closeBtn && closeBtn.parentNode) closeBtn.parentNode.removeChild(closeBtn);
+            if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.removeChild(themeBtn);
         }, 600);
 
         activeOverlay = null;
         activeModal = null;
         activeCloseBtn = null;
+        activeThemeBtn = null;
 
         // Restore body scroll
         document.body.style.overflow = '';
@@ -570,6 +599,86 @@
 
     function handleEscapeKey(e) {
         if (e.key === 'Escape') closeModal();
+    }
+
+
+    // =========================================================================
+    // THEME TOGGLE — Switch between dark and light portal theme
+    // =========================================================================
+
+    function togglePortalTheme(e) {
+        // Don't toggle if user was dragging
+        if (activeThemeBtn && activeThemeBtn._wasDragged) {
+            activeThemeBtn._wasDragged = false;
+            return;
+        }
+        isLightTheme = !isLightTheme;
+        if (activeModal) activeModal.classList.toggle('eco-light', isLightTheme);
+        if (activeThemeBtn) {
+            activeThemeBtn.classList.toggle('eco-light-active', isLightTheme);
+            activeThemeBtn.querySelector('.eco-theme-label').textContent = isLightTheme ? 'Dark' : 'Light';
+        }
+    }
+
+
+    // =========================================================================
+    // DRAGGABLE — Make the theme button repositionable
+    // =========================================================================
+
+    function makeDraggable(element) {
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+        let hasMoved = false;
+
+        function onPointerDown(e) {
+            if (e.button !== 0) return; // left click only
+            isDragging = true;
+            hasMoved = false;
+            element._wasDragged = false;
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const rect = element.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+
+            element.style.transition = 'none';
+            element.setPointerCapture(e.pointerId);
+            e.preventDefault();
+        }
+
+        function onPointerMove(e) {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+
+            let newLeft = initialLeft + dx;
+            let newTop = initialTop + dy;
+
+            // Clamp within viewport
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
+            newLeft = Math.max(0, Math.min(window.innerWidth - w, newLeft));
+            newTop = Math.max(0, Math.min(window.innerHeight - h, newTop));
+
+            element.style.left = newLeft + 'px';
+            element.style.top = newTop + 'px';
+            element.style.right = 'auto';
+            element.classList.add('eco-dragging');
+        }
+
+        function onPointerUp(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            element.style.transition = '';
+            element.classList.remove('eco-dragging');
+            if (hasMoved) element._wasDragged = true;
+        }
+
+        element.addEventListener('pointerdown', onPointerDown);
+        element.addEventListener('pointermove', onPointerMove);
+        element.addEventListener('pointerup', onPointerUp);
     }
 
 
