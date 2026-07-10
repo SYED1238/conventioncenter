@@ -490,7 +490,7 @@
     let activeCloseBtn = null;
     let activeThemeBtn = null;
     let scrollObserver = null;
-    let isLightTheme = false;
+    let isLightTheme = true;
 
     function openModal(portalKey) {
         // Prevent duplicate modals
@@ -524,7 +524,7 @@
         activeThemeBtn.innerHTML = `
             <span class="eco-theme-icon eco-theme-icon--sun">${ICONS.themeSun}</span>
             <span class="eco-theme-icon eco-theme-icon--moon">${ICONS.themeMoon}</span>
-            <span class="eco-theme-label">Light</span>
+            <span class="eco-theme-label">Dark</span>
         `;
         activeThemeBtn.addEventListener('click', togglePortalTheme);
         document.body.appendChild(activeThemeBtn);
