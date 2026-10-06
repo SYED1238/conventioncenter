@@ -1,0 +1,1228 @@
+/* ==========================================================================
+   Auralis Wedding Hall — Section 4: 360° Real Drone Orbit & 3D Spatial Suite
+   Interactive Cursor Scrubbing, 3D Perspective Tilt & Canvas Turntable Engine
+   ========================================================================== */
+
+:root {
+    --fp-gold: #dfa64a;
+    --fp-gold-light: #f7e0b5;
+    --fp-gold-glow: rgba(223, 166, 74, 0.35);
+    --fp-gold-dim: rgba(223, 166, 74, 0.15);
+    --fp-cyan-accent: #64d2ff;
+    --fp-dark-bg: #040306;
+    --fp-card-bg: rgba(13, 11, 18, 0.82);
+    --fp-border: rgba(223, 166, 74, 0.22);
+    --fp-border-active: rgba(223, 166, 74, 0.85);
+    --fp-text-primary: #ffffff;
+    --fp-text-secondary: rgba(255, 255, 255, 0.72);
+    --fp-text-muted: rgba(255, 255, 255, 0.42);
+    --fp-font-serif: 'Cormorant Garamond', Georgia, serif;
+    --fp-font-heading: 'Outfit', sans-serif;
+    --fp-font-body: 'Plus Jakarta Sans', sans-serif;
+    --fp-font-mono: 'SF Mono', 'Courier New', monospace;
+}
+
+/* --------------------------------------------------------------------------
+   Section Layout & Blueprint Ambience
+   -------------------------------------------------------------------------- */
+
+.floorplan-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding: 130px 32px 140px;
+    background-color: var(--fp-dark-bg);
+    overflow: hidden;
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 6;
+    box-sizing: border-box;
+    font-family: var(--fp-font-body);
+}
+
+/* Blueprint Grid Background */
+.fp-blueprint-grid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(to right, rgba(223, 166, 74, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(223, 166, 74, 0.05) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.65;
+}
+
+/* Architectural Ambient Halo */
+.fp-ambient-glow {
+    position: absolute;
+    width: 1000px;
+    height: 750px;
+    border-radius: 50%;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(223, 166, 74, 0.09) 0%, rgba(100, 210, 255, 0.03) 45%, transparent 75%);
+    pointer-events: none;
+    filter: blur(90px);
+    z-index: 1;
+}
+
+/* Hairline Top Divider */
+.fp-top-divider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    max-width: 960px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(223, 166, 74, 0.4), transparent);
+    z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   Container & Header
+   -------------------------------------------------------------------------- */
+
+.floorplan-container {
+    position: relative;
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.floorplan-header {
+    text-align: center;
+    max-width: 860px;
+    margin-bottom: 40px;
+}
+
+.fp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border-radius: 999px;
+    background: rgba(223, 166, 74, 0.08);
+    border: 1px solid rgba(223, 166, 74, 0.3);
+    color: var(--fp-gold-light);
+    font-size: 11px;
+    letter-spacing: 2.8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 20px rgba(223, 166, 74, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.fp-eyebrow-sparkle {
+    color: var(--fp-gold);
+    font-size: 12px;
+}
+
+.floorplan-title {
+    font-family: var(--fp-font-serif);
+    font-size: clamp(34px, 4.8vw, 56px);
+    font-weight: 500;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+}
+
+.floorplan-title-accent {
+    font-style: italic;
+    background: linear-gradient(135deg, #ffffff 15%, #dfa64a 55%, #f7e0b5 90%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-right: 4px;
+}
+
+.floorplan-subtitle {
+    font-size: clamp(14px, 1.25vw, 16px);
+    color: var(--fp-text-secondary);
+    line-height: 1.68;
+    max-width: 720px;
+    margin: 0 auto;
+    font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   Top Controls Bar (Mode Switcher + Seating Mode + Metrics)
+   -------------------------------------------------------------------------- */
+
+.fp-toolbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 20px;
+    background: rgba(18, 15, 24, 0.78);
+    border: 1px solid var(--fp-border);
+    border-radius: 18px;
+    backdrop-filter: blur(28px);
+    margin-bottom: 24px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+}
+
+.fp-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.fp-toolbar-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--fp-text-muted);
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+/* Live Orbit View Status Badge */
+.fp-orbit-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 18px 7px 14px;
+    border-radius: 999px;
+    background: rgba(223, 166, 74, 0.1);
+    border: 1px solid rgba(223, 166, 74, 0.35);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.fp-orbit-badge-icon {
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    animation: fpDroneHover 3s ease-in-out infinite alternate;
+}
+
+@keyframes fpDroneHover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-2px); }
+}
+
+.fp-orbit-badge-text {
+    font-family: var(--fp-font-heading);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--fp-gold-light);
+    text-transform: uppercase;
+}
+
+.fp-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+    animation: fpPulseGreen 2s infinite ease-in-out;
+}
+
+@keyframes fpPulseGreen {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Estate Live Stat Badge */
+.fp-estate-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: rgba(223, 166, 74, 0.08);
+    border: 1px solid rgba(223, 166, 74, 0.25);
+}
+
+.fp-stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.fp-stat-val {
+    font-family: var(--fp-font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fp-gold-light);
+}
+
+.fp-stat-lbl {
+    font-size: 9.5px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--fp-text-muted);
+}
+
+.fp-stat-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(223, 166, 74, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   Main Architectural Stage Grid (Left Viewport + Right HUD Inspector)
+   -------------------------------------------------------------------------- */
+
+.fp-stage-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.48fr 0.82fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* Viewport Frame with 3D Perspective Shell */
+.fp-map-viewport {
+    position: relative;
+    background: #06050a;
+    border: 1px solid var(--fp-border);
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 640px;
+    perspective: 1200px;
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.75),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 0 50px rgba(0, 0, 0, 0.8);
+    transition: border-color 0.4s ease;
+}
+
+.fp-map-viewport:hover {
+    border-color: rgba(223, 166, 74, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   360° Real Drone Orbit Video Viewport (The Star Feature)
+   -------------------------------------------------------------------------- */
+
+.fp-video-orbit-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: ew-resize;
+    touch-action: pan-y;
+    z-index: 2;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.fp-video-orbit-wrapper.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.fp-video-3d-stage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+}
+
+#fp-orbit-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    transform: scale(1.03);
+    filter: brightness(1.02) contrast(1.02);
+}
+
+.fp-orbit-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: rgba(14, 11, 20, 0.88);
+    border: 1px solid rgba(223, 166, 74, 0.35);
+    padding: 16px 26px;
+    border-radius: 14px;
+    backdrop-filter: blur(16px);
+    z-index: 8;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.fp-orbit-loader.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fp-loader-spinner {
+    width: 28px;
+    height: 28px;
+    border: 2.5px solid rgba(223, 166, 74, 0.2);
+    border-top-color: var(--fp-gold);
+    border-radius: 50%;
+    animation: fpSpinner 0.8s linear infinite;
+}
+
+@keyframes fpSpinner {
+    to { transform: rotate(360deg); }
+}
+
+.fp-loader-text {
+    font-family: var(--fp-font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--fp-gold-light);
+}
+
+/* Dynamic Angle Badge Floating in Upper Sky */
+.fp-live-angle-badge {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border-radius: 999px;
+    background: rgba(14, 11, 20, 0.88);
+    border: 1px solid var(--fp-gold);
+    color: #ffffff;
+    font-family: var(--fp-font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    backdrop-filter: blur(16px);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.7),
+        0 0 20px rgba(223, 166, 74, 0.28);
+    z-index: 14;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.fp-angle-beacon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px #4ade80;
+    animation: beaconPulse 2s infinite ease-in-out;
+}
+
+@keyframes beaconPulse {
+    0%, 100% { transform: scale(0.9); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+
+/* Scrubber Hint Overlay on Video (Bottom-Right Floating Pill) */
+.fp-scrub-hint-cue {
+    position: absolute;
+    bottom: 18px;
+    right: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    background: rgba(10, 8, 14, 0.88);
+    border: 1px solid rgba(223, 166, 74, 0.3);
+    border-radius: 999px;
+    color: var(--fp-text-secondary);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    backdrop-filter: blur(14px);
+    pointer-events: none;
+    z-index: 12;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.fp-scrub-hint-cue .cue-arrow {
+    color: var(--fp-gold);
+    font-size: 13px;
+    animation: arrowNudge 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes arrowNudge {
+    0% { transform: translateX(-3px); }
+    100% { transform: translateX(3px); }
+}
+
+/* 360 Video Playback Toolbar (Left-Bottom inside Viewport) */
+.fp-video-cam-controls {
+    position: absolute;
+    bottom: 60px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    background: rgba(14, 11, 20, 0.88);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(223, 166, 74, 0.3);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.fp-video-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--fp-text-secondary);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.fp-video-btn:hover {
+    background: rgba(223, 166, 74, 0.15);
+    color: #ffffff;
+    border-color: rgba(223, 166, 74, 0.4);
+}
+
+.fp-video-btn.active {
+    background: rgba(223, 166, 74, 0.25);
+    border-color: var(--fp-gold);
+    color: var(--fp-gold-light);
+}
+
+
+
+/* 3D Overlay Vignette */
+.fp-viewport-vignette {
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 120px rgba(4, 3, 7, 0.85);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Top Compass & Metadata Tag */
+.fp-compass-tag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 14;
+    pointer-events: none;
+    background: rgba(12, 10, 16, 0.82);
+    padding: 5px 14px 5px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(223, 166, 74, 0.3);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.fp-compass-dial {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--fp-gold);
+    background: rgba(223, 166, 74, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--fp-gold-light);
+    box-shadow: 0 0 12px rgba(223, 166, 74, 0.3);
+}
+
+.fp-compass-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.fp-compass-title {
+    font-family: var(--fp-font-heading);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.fp-compass-coords {
+    font-family: var(--fp-font-mono);
+    font-size: 9px;
+    color: var(--fp-gold-light);
+    opacity: 0.8;
+}
+
+/* Quick Zone Selector Chips on Map Header */
+.fp-zone-quick-chips {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 6px;
+    z-index: 14;
+    flex-wrap: nowrap;
+}
+
+.fp-chip-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(14, 11, 20, 0.82);
+    border: 1px solid rgba(223, 166, 74, 0.25);
+    color: var(--fp-text-secondary);
+    font-family: var(--fp-font-heading);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.fp-chip-btn:hover {
+    background: rgba(223, 166, 74, 0.18);
+    color: #ffffff;
+    border-color: var(--fp-gold);
+}
+
+.fp-chip-btn.active {
+    background: var(--fp-gold);
+    color: #120e0a;
+    border-color: var(--fp-gold);
+    font-weight: 700;
+    box-shadow: 0 2px 14px rgba(223, 166, 74, 0.45);
+}
+
+/* 360 Video Controls Toolbar (Left-Bottom overlay) */
+.fp-video-cam-controls {
+    position: absolute;
+    bottom: 18px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 14;
+    background: rgba(14, 11, 20, 0.88);
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(223, 166, 74, 0.3);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.fp-video-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--fp-text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.fp-video-btn:hover {
+    background: rgba(223, 166, 74, 0.15);
+    color: #ffffff;
+    border-color: rgba(223, 166, 74, 0.4);
+}
+
+.fp-video-btn.active {
+    background: rgba(223, 166, 74, 0.25);
+    border-color: var(--fp-gold);
+    color: var(--fp-gold-light);
+}
+
+.fp-video-btn .fp-cam-btn-icon {
+    font-size: 13px;
+}
+
+
+
+.fp-3d-marker:hover .fp-marker-pill,
+.fp-3d-marker.active .fp-marker-pill {
+    background: var(--fp-gold);
+    color: #120e0a;
+    border-color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(223, 166, 74, 0.5);
+}
+
+.fp-3d-marker:hover .fp-marker-dot,
+.fp-3d-marker.active .fp-marker-dot {
+    background: #120e0a;
+    box-shadow: none;
+}
+
+
+
+/* --------------------------------------------------------------------------
+   HUD Specs Inspector Panel (Right Column)
+   -------------------------------------------------------------------------- */
+
+.fp-specs-inspector {
+    background: var(--fp-card-bg);
+    border: 1px solid var(--fp-border);
+    border-radius: 24px;
+    backdrop-filter: blur(36px);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.65),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s ease;
+}
+
+.fp-specs-inspector:hover {
+    border-color: rgba(223, 166, 74, 0.45);
+}
+
+/* Top Live Tag */
+.inspector-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.inspector-zone-code {
+    font-family: var(--fp-font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--fp-gold);
+    font-weight: 700;
+}
+
+.inspector-live-tag {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(100, 210, 255, 0.12);
+    border: 1px solid rgba(100, 210, 255, 0.3);
+    color: var(--fp-cyan-accent);
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+/* Zone Title & Description */
+.inspector-zone-title {
+    font-family: var(--fp-font-serif);
+    font-size: clamp(26px, 2.3vw, 34px);
+    font-weight: 600;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+}
+
+.inspector-zone-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--fp-text-secondary);
+    margin-bottom: 24px;
+}
+
+/* Metric Gauges Grid */
+.inspector-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.inspector-metric-card {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    transition: all 0.3s ease;
+}
+
+.inspector-metric-card:hover {
+    background: rgba(223, 166, 74, 0.06);
+    border-color: rgba(223, 166, 74, 0.25);
+    transform: translateY(-2px);
+}
+
+.metric-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--fp-text-muted);
+    font-weight: 700;
+}
+
+.metric-value {
+    font-family: var(--fp-font-heading);
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.metric-sub {
+    font-size: 11px;
+    color: var(--fp-gold-light);
+}
+
+/* Feature Bullet Points */
+.inspector-features-card {
+    background: rgba(16, 13, 22, 0.65);
+    border: 1px solid rgba(223, 166, 74, 0.18);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feature-card-header {
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--fp-gold-light);
+    font-weight: 700;
+}
+
+.feature-bullet-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--fp-text-secondary);
+    line-height: 1.5;
+}
+
+.feature-bullet-icon {
+    color: var(--fp-gold);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Action CTA Buttons */
+.inspector-action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fp-book-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #dfa64a 0%, #c48c34 100%);
+    color: #120e0a;
+    font-family: var(--fp-font-heading);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 
+        0 10px 25px rgba(223, 166, 74, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fp-book-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(223, 166, 74, 0.45);
+    background: linear-gradient(135deg, #f7e0b5 0%, #dfa64a 100%);
+}
+
+.fp-download-plan-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--fp-text-secondary);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.25s ease;
+}
+
+.fp-download-plan-btn:hover {
+    border-color: var(--fp-gold);
+    color: #ffffff;
+    background: rgba(223, 166, 74, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layout & Mobile Adaptation
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1140px) {
+    .fp-stage-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .fp-map-viewport {
+        min-height: 520px;
+    }
+
+    .fp-zone-quick-chips {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .floorplan-section {
+        padding: 70px 14px 80px;
+    }
+
+    .floorplan-header {
+        margin-bottom: 24px;
+    }
+
+    .floorplan-title {
+        font-size: clamp(26px, 6.8vw, 36px);
+        margin-bottom: 12px;
+    }
+
+    .floorplan-subtitle {
+        font-size: 13.5px;
+        line-height: 1.55;
+    }
+
+    /* Toolbar on Mobile */
+    .fp-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 16px;
+        margin-bottom: 18px;
+    }
+
+    .fp-toolbar-group {
+        width: 100%;
+    }
+
+    .fp-mode-switcher {
+        width: 100%;
+        display: flex;
+    }
+
+    .fp-mode-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 11.5px;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .fp-estate-stat {
+        width: 100%;
+        justify-content: space-around;
+        padding: 8px 12px;
+        border-radius: 12px;
+    }
+
+    .fp-stat-val {
+        font-size: 12px;
+    }
+
+    .fp-stat-lbl {
+        font-size: 8.5px;
+    }
+
+    /* 360 Viewport Frame on Mobile */
+    .fp-map-viewport {
+        min-height: 480px;
+        height: 500px;
+        border-radius: 20px;
+    }
+
+    /* Top Row in Viewport: Compass on Left, Live Angle Badge on Right */
+    .fp-compass-tag {
+        top: 12px;
+        left: 12px;
+        padding: 4px 10px 4px 5px;
+        gap: 6px;
+    }
+
+    .fp-compass-dial {
+        width: 26px;
+        height: 26px;
+        font-size: 9.5px;
+    }
+
+    .fp-compass-title {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+    }
+
+    .fp-compass-coords {
+        display: none;
+    }
+
+    /* Live Angle Badge pinned neatly to top-right on mobile */
+    .fp-live-angle-badge {
+        top: 12px;
+        right: 12px;
+        left: auto;
+        transform: none;
+        padding: 5px 12px;
+        font-size: 9.5px;
+        letter-spacing: 0.8px;
+        gap: 6px;
+    }
+
+    .fp-angle-beacon {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* Row 2: Swipeable Horizontal Strip for Zone Chips */
+    .fp-zone-quick-chips {
+        top: 48px;
+        left: 12px;
+        right: 12px;
+        max-width: 100%;
+        width: calc(100% - 24px);
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        justify-content: flex-start;
+        z-index: 14;
+    }
+
+    .fp-zone-quick-chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .fp-chip-btn {
+        flex-shrink: 0;
+        padding: 5px 11px;
+        font-size: 10.5px;
+        border-radius: 999px;
+        background: rgba(14, 11, 20, 0.88);
+    }
+
+    /* Bottom Row Controls on Mobile */
+    .fp-video-cam-controls {
+        bottom: 12px;
+        left: 12px;
+        padding: 4px 8px;
+        gap: 4px;
+        border-radius: 10px;
+    }
+
+    .fp-video-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+        gap: 4px;
+        border-radius: 6px;
+    }
+
+    .fp-video-btn .fp-cam-btn-icon {
+        font-size: 11px;
+    }
+
+
+
+    .fp-scrub-hint-cue {
+        bottom: 12px;
+        right: 12px;
+        padding: 5px 10px;
+        font-size: 9.5px;
+        gap: 5px;
+    }
+
+    .fp-scrub-hint-cue .cue-arrow {
+        font-size: 10px;
+    }
+
+    /* Inspector Panel on Mobile */
+    .fp-specs-inspector {
+        padding: 20px 16px;
+        border-radius: 20px;
+        margin-top: 16px;
+    }
+
+    .inspector-top-row {
+        margin-bottom: 10px;
+    }
+
+    .inspector-zone-code {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+    }
+
+    .inspector-live-tag {
+        font-size: 9px;
+        padding: 2px 7px;
+    }
+
+    .inspector-zone-title {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .inspector-zone-desc {
+        font-size: 13px;
+        line-height: 1.55;
+        margin-bottom: 18px;
+    }
+
+    /* 2x2 Clean Grid for Metrics on Mobile */
+    .inspector-metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .inspector-metric-card {
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .metric-label {
+        font-size: 9px;
+    }
+
+    .metric-value {
+        font-size: 15px;
+    }
+
+    .metric-sub {
+        font-size: 9.5px;
+    }
+
+    .inspector-features-card {
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        border-radius: 14px;
+    }
+
+    .feature-card-header {
+        font-size: 10px;
+        letter-spacing: 1.2px;
+    }
+
+    .feature-bullet-item {
+        font-size: 12px;
+        gap: 8px;
+    }
+
+    .inspector-action-row {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .fp-book-cta {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 18px;
+        font-size: 13px;
+        border-radius: 12px;
+    }
+
+    .fp-download-plan-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 16px;
+        font-size: 11.5px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floorplan-section {
+        padding: 60px 10px 70px;
+    }
+
+    .fp-map-viewport {
+        min-height: 440px;
+        height: 460px;
+        border-radius: 16px;
+    }
+
+    .fp-specs-inspector {
+        padding: 18px 12px;
+        border-radius: 16px;
+    }
+
+    .fp-video-btn span:last-child {
+        display: none;
+    }
+
+    .fp-video-btn {
+        padding: 6px 8px;
+    }
+
+    .fp-video-btn .fp-cam-btn-icon {
+        font-size: 13px;
+    }
+}

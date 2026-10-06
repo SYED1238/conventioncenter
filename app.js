@@ -47,14 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     const imageSets = {
         desktop: {
-            clear: "Assets/images/campus-day.webp.jpeg",
-            rain:  "Assets/images/campus-rain.webp.jpeg",
-            night: "Assets/images/campus-night.webp.jpeg"
+            clear: "Assets/images/hall-day.jpg",
+            rain:  "Assets/images/hall-rain.jpg",
+            night: "Assets/images/hall-night.jpg"
         },
         mobile: {
-            clear: "Assets/images/mobile/campus-day-mobile.webp.jpeg",
-            rain:  "Assets/images/mobile/campus-rain-mobile.webp.jpeg",
-            night: "Assets/images/mobile/campus-night-mobile.webp.jpeg"
+            clear: "Assets/images/mobile/hall-day-mobile.jpg",
+            rain:  "Assets/images/mobile/hall-rain-mobile.jpg",
+            night: "Assets/images/mobile/hall-night-mobile.jpg"
         }
     };
 
@@ -108,23 +108,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     const heroContent = {
         clear: {
-            title: 'Engineering the Future. <br><span class="text-gradient">Rooted in Excellence.</span>',
-            subtitle: 'Step onto a campus designed for the <span class="clear-glow-text">next century</span>. Experience our <span class="clear-glow-text">state-of-the-art laboratory hubs</span>, architectural marvels, and <span class="clear-glow-text">collaborative student spaces</span>.'
+            title: 'Where Forever Begins. <br><span class="text-gradient">Crafted in Splendor.</span>',
+            subtitle: 'Step into an architectural masterpiece designed for your most cherished moments. Experience sunlit banquet halls, manicured gardens, and world-class hospitality.'
         },
         rain: {
-            title: 'Experience Ghousia<br><span class="text-gradient">in the Monsoon.</span>',
-            subtitle: 'Watch the campus come alive as <span class="rain-glow-text">monsoon rains</span> transform every corridor into a <span class="rain-glow-text">cinematic frame</span>. The <span class="rain-glow-text">rhythm of rain</span> meets the pulse of learning.'
+            title: 'Monsoon Romance. <br><span class="text-gradient">Unforgettable Memories.</span>',
+            subtitle: 'Watch the grand glass facade reflect the poetry of gentle monsoon rain. Cozy luxury banquet halls, ambient chandeliers, and heartfelt celebratory moments.'
         },
         night: {
-            title: 'A Campus That Never<br><span class="text-gradient">Stops Inspiring.</span>',
-            subtitle: 'When the sun sets, our campus <span class="night-glow-text">illuminates with purpose</span>. <span class="night-glow-text">Late-night labs</span>, lit pathways, and the <span class="night-glow-text">quiet energy</span> of minds at work.'
+            title: 'A Starlit Haven. <br><span class="text-gradient">Illuminated in Grandeur.</span>',
+            subtitle: 'When twilight falls, Auralis glows with royal elegance. Grand facade lighting, illuminated garden promenades, and celebratory starlight splendor.'
         }
     };
 
     const statusMessages = {
-        clear: { initializing: 'Initializing Day...', active: 'Morning Atmosphere Active' },
-        rain: { initializing: 'Initializing Rain...', active: 'Monsoon Atmosphere Active' },
-        night: { initializing: 'Initializing Night...', active: 'Campus Lights Active' }
+        clear: { initializing: 'Setting Daylight Ambiance...', active: 'Day Ceremony Ambiance Active' },
+        rain: { initializing: 'Setting Rain Ambiance...', active: 'Monsoon Celebration Mood Active' },
+        night: { initializing: 'Setting Evening Lights...', active: 'Starlight Reception Active' }
     };
 
     // -------------------------------------------------------------------------
@@ -1865,7 +1865,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Specular Reflection Highlight (Mouse tracking) ---
     function trackSpecularReflections() {
-        const trackedButtons = document.querySelectorAll('.weather-btn, .btn, .live-sync-container');
+        const trackedButtons = document.querySelectorAll('.weather-btn, .btn');
 
         trackedButtons.forEach(btn => {
             btn.addEventListener('mousemove', (e) => {
@@ -2069,34 +2069,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Live Weather Sync Toggle & Premium Feature Card Interactive Events
-        const liveSyncWidget = document.getElementById('live-sync-widget');
-        const syncFeatureCard = document.getElementById('sync-feature-card');
-
-        if (liveSyncWidget && syncFeatureCard) {
-            // Hover show/hide premium feature card
-            liveSyncWidget.addEventListener('mouseenter', () => {
-                syncFeatureCard.classList.add('active');
-            });
-            liveSyncWidget.addEventListener('mouseleave', () => {
-                syncFeatureCard.classList.remove('active');
-            });
-
-            // Click triggers locked chime + toggle switch container bounce
-            liveSyncWidget.addEventListener('click', (e) => {
-                e.stopPropagation();
-                
-                // Play locked sensory sound blip
-                triggerLockedChime();
-                
-                // Subtle visual bounce response on the toggle widget
-                liveSyncWidget.style.transform = 'translate3d(0, 0, 10px) scale(0.97)';
-                setTimeout(() => {
-                    // Let the magnetism restore normal state
-                    liveSyncWidget.style.transform = '';
-                }, 100);
-            });
-        }
     }
 
     // Master execution block
@@ -2118,6 +2090,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Core Listeners
         initEvents();
+        initSpacesGallery();
 
         // Show initial atmosphere status briefly
         setTimeout(() => {
@@ -2127,6 +2100,433 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Start requestAnimationFrame core loops
         animate();
+    }
+
+    // =========================================================================
+    // SECTION 2: SIGNATURE SPACES ACCORDION GALLERY & SIDE-SCROLL ENGINE
+    // =========================================================================
+    function initSpacesGallery() {
+        const gallerySection = document.getElementById('auralis-spaces');
+        const galleryContainer = document.getElementById('spaces-gallery-container');
+        const track = document.getElementById('accordion-track');
+        const cards = Array.from(document.querySelectorAll('.accordion-card'));
+        const dots = Array.from(document.querySelectorAll('.pagination-dot'));
+        const prevBtn = document.getElementById('gallery-prev-btn');
+        const nextBtn = document.getElementById('gallery-next-btn');
+        const mobilePrevBtn = document.getElementById('mobile-prev-btn');
+        const mobileNextBtn = document.getElementById('mobile-next-btn');
+        const mobileCounterIndex = document.getElementById('mobile-counter-index');
+        const mobileCounterName = document.getElementById('mobile-counter-name');
+        const ambientGlow = document.getElementById('spaces-ambient-glow');
+        const exploreHeroBtn = document.getElementById('hero-explore-btn');
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+
+        if (!galleryContainer || !cards.length) return;
+
+        let activeIndex = 2; // Default active card: index 2 (Imperial Open-Air Lawn)
+
+        const spaceThemes = [
+            { name: 'ballroom', title: 'The Grand Royal Ballroom',   glow: 'rgba(223, 166, 74, 0.20)', freq: 330 },
+            { name: 'crystal',  title: 'Crystal Banquet Hall',       glow: 'rgba(167, 139, 250, 0.22)', freq: 440 },
+            { name: 'lawn',     title: 'Imperial Open-Air Lawn',     glow: 'rgba(52, 211, 153, 0.20)', freq: 392 },
+            { name: 'gala',     title: 'Starlight Gala Amphitheater', glow: 'rgba(56, 189, 248, 0.20)', freq: 523.25 },
+            { name: 'facade',   title: 'The Grand Portico & Foyer',  glow: 'rgba(245, 158, 11, 0.20)', freq: 587.33 }
+        ];
+
+        // Synthesize subtle luxury audio glass chime
+        function playGalleryChime(index) {
+            try {
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtxClass) return;
+                const ctx = (typeof audioCtx !== 'undefined' && audioCtx) ? audioCtx : new AudioCtxClass();
+                if (ctx.state === 'suspended') {
+                    ctx.resume().catch(() => {});
+                }
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                const freq = spaceThemes[index]?.freq || 440;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 0.12);
+
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.linearRampToValueAtTime(0.035, now + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.26);
+            } catch (e) {
+                // Gracefully handled if browser policy restricts audio before user gesture
+            }
+        }
+
+        // Mobile centered track positioning (pure translate3d, mathematically derived)
+        function updateMobileTrackPosition() {
+            if (window.innerWidth <= 768) {
+                const containerWidth = galleryContainer.clientWidth || window.innerWidth;
+                const activeCard = cards[activeIndex];
+                const inactiveFallback = window.innerWidth <= 380 ? 38 : 46;
+                const activeFallback = window.innerWidth <= 380 
+                    ? Math.min(275, containerWidth - 90) 
+                    : Math.min(310, containerWidth - 116);
+
+                const gap = 10;
+                let centerOffset = 0;
+
+                for (let i = 0; i < activeIndex; i++) {
+                    const cardW = (cards[i] && cards[i].offsetWidth > 0) ? cards[i].offsetWidth : inactiveFallback;
+                    centerOffset += cardW + gap;
+                }
+
+                const currentActiveW = (activeCard && activeCard.offsetWidth > 0) ? activeCard.offsetWidth : activeFallback;
+                centerOffset += (currentActiveW / 2);
+
+                const targetX = (containerWidth / 2) - centerOffset;
+                track.style.transform = `translate3d(${targetX.toFixed(1)}px, 0, 0)`;
+            } else {
+                track.style.transform = '';
+            }
+        }
+
+        function setActiveSpace(newIndex, playSound = true) {
+            if (newIndex < 0 || newIndex >= cards.length) return;
+            if (newIndex === activeIndex) {
+                updateMobileTrackPosition();
+                return;
+            }
+
+            activeIndex = newIndex;
+
+            // Update cards
+            cards.forEach((card, idx) => {
+                const isActive = (idx === activeIndex);
+                card.classList.toggle('active', isActive);
+                card.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                card.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+
+            // Smoothly center the active card on mobile (zero window scrolling!)
+            updateMobileTrackPosition();
+
+            // Update dots
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === activeIndex);
+            });
+
+            // Update mobile space counter
+            if (mobileCounterIndex) {
+                mobileCounterIndex.textContent = `0${activeIndex + 1}`;
+            }
+            if (mobileCounterName) {
+                mobileCounterName.textContent = spaceThemes[activeIndex]?.title || '';
+            }
+
+            // Update ambient glow
+            if (ambientGlow) {
+                const theme = spaceThemes[activeIndex];
+                ambientGlow.style.setProperty('--space-glow-color', theme.glow);
+            }
+
+            if (playSound) {
+                playGalleryChime(activeIndex);
+            }
+        }
+
+        // Click card to activate
+        cards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                setActiveSpace(index);
+            });
+
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveSpace(index);
+                }
+            });
+        });
+
+        // Click pagination dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                setActiveSpace(index);
+            });
+        });
+
+        // Navigation arrow buttons (Desktop)
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = activeIndex > 0 ? activeIndex - 1 : cards.length - 1;
+                setActiveSpace(target);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = activeIndex < cards.length - 1 ? activeIndex + 1 : 0;
+                setActiveSpace(target);
+            });
+        }
+
+        // Navigation arrow buttons (Mobile)
+        if (mobilePrevBtn) {
+            mobilePrevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = activeIndex > 0 ? activeIndex - 1 : cards.length - 1;
+                setActiveSpace(target);
+            });
+        }
+
+        if (mobileNextBtn) {
+            mobileNextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = activeIndex < cards.length - 1 ? activeIndex + 1 : 0;
+                setActiveSpace(target);
+            });
+        }
+
+        // =====================================================================
+        // SIDE-SCROLL & WHEEL GESTURE ENGINE
+        // =====================================================================
+        let wheelCooldown = false;
+        let wheelAccumulator = 0;
+
+        galleryContainer.addEventListener('wheel', (e) => {
+            const absX = Math.abs(e.deltaX);
+
+            // Handle horizontal side-scroll (trackpad or horizontal wheel)
+            if (absX > 15) {
+                e.preventDefault();
+                if (wheelCooldown) return;
+
+                if (e.deltaX > 15) {
+                    if (activeIndex < cards.length - 1) {
+                        setActiveSpace(activeIndex + 1);
+                        triggerCooldown(380);
+                    }
+                } else if (e.deltaX < -15) {
+                    if (activeIndex > 0) {
+                        setActiveSpace(activeIndex - 1);
+                        triggerCooldown(380);
+                    }
+                }
+                return;
+            }
+
+            // Handle vertical mouse wheel when hovered directly over the card track
+            const isOverTrack = e.target.closest('#accordion-track');
+            if (isOverTrack) {
+                if (e.deltaY > 25 && activeIndex < cards.length - 1) {
+                    e.preventDefault();
+                    wheelAccumulator += e.deltaY;
+                    if (!wheelCooldown && wheelAccumulator > 30) {
+                        setActiveSpace(activeIndex + 1);
+                        wheelAccumulator = 0;
+                        triggerCooldown(380);
+                    }
+                } else if (e.deltaY < -25 && activeIndex > 0) {
+                    e.preventDefault();
+                    wheelAccumulator += e.deltaY;
+                    if (!wheelCooldown && wheelAccumulator < -30) {
+                        setActiveSpace(activeIndex - 1);
+                        wheelAccumulator = 0;
+                        triggerCooldown(380);
+                    }
+                } else {
+                    wheelAccumulator = 0;
+                }
+            }
+        }, { passive: false });
+
+        function triggerCooldown(ms = 350) {
+            wheelCooldown = true;
+            setTimeout(() => {
+                wheelCooldown = false;
+            }, ms);
+        }
+
+        // =====================================================================
+        // TOUCH GESTURE ENGINE (Mobile Swipe)
+        // =====================================================================
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchDiffX = 0;
+        let isTouching = false;
+        let isHorizontalSwipe = false;
+
+        galleryContainer.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.mobile-nav-btn') || e.target.closest('.gallery-nav-btn') || e.target.closest('.pagination-dot')) return;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchDiffX = 0;
+            isTouching = true;
+            isHorizontalSwipe = false;
+        }, { passive: true });
+
+        galleryContainer.addEventListener('touchmove', (e) => {
+            if (!isTouching) return;
+            const touch = e.touches[0];
+            touchDiffX = touch.clientX - touchStartX;
+            const diffY = touch.clientY - touchStartY;
+
+            if (!isHorizontalSwipe && Math.abs(touchDiffX) > 8) {
+                if (Math.abs(touchDiffX) > Math.abs(diffY)) {
+                    isHorizontalSwipe = true;
+                }
+            }
+        }, { passive: true });
+
+        function handleTouchEnd() {
+            if (!isTouching) return;
+            isTouching = false;
+
+            if (isHorizontalSwipe) {
+                if (touchDiffX < -35) {
+                    // Swiped Left -> Next Card
+                    if (activeIndex < cards.length - 1) {
+                        setActiveSpace(activeIndex + 1);
+                    } else {
+                        setActiveSpace(0);
+                    }
+                } else if (touchDiffX > 35) {
+                    // Swiped Right -> Prev Card
+                    if (activeIndex > 0) {
+                        setActiveSpace(activeIndex - 1);
+                    } else {
+                        setActiveSpace(cards.length - 1);
+                    }
+                } else {
+                    updateMobileTrackPosition();
+                }
+            }
+            isHorizontalSwipe = false;
+        }
+
+        galleryContainer.addEventListener('touchend', handleTouchEnd);
+        galleryContainer.addEventListener('touchcancel', handleTouchEnd);
+
+        // =====================================================================
+        // DESKTOP MOUSE POINTER DRAG
+        // =====================================================================
+        let isPointerDown = false;
+        let mouseStartX = 0;
+        let mouseCurrentX = 0;
+
+        track.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.gallery-nav-btn') || e.target.closest('.mobile-nav-btn')) return;
+            if (window.innerWidth <= 768) return; // handled by touch
+            isPointerDown = true;
+            mouseStartX = e.clientX;
+            mouseCurrentX = e.clientX;
+            track.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isPointerDown) return;
+            mouseCurrentX = e.clientX;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isPointerDown) return;
+            isPointerDown = false;
+            track.style.cursor = '';
+            const diff = mouseCurrentX - mouseStartX;
+            if (diff < -45) {
+                if (activeIndex < cards.length - 1) setActiveSpace(activeIndex + 1);
+                else setActiveSpace(0);
+            } else if (diff > 45) {
+                if (activeIndex > 0) setActiveSpace(activeIndex - 1);
+                else setActiveSpace(cards.length - 1);
+            }
+        });
+
+        // Re-verify alignment when card layout animation completes
+        track.addEventListener('transitionend', (e) => {
+            if (window.innerWidth <= 768 && e.target && e.target.classList && e.target.classList.contains('accordion-card')) {
+                updateMobileTrackPosition();
+            }
+        });
+
+        // Keep track positioned on window resize and orientation change
+        let galleryResizeTimer = null;
+        const handleResize = () => {
+            clearTimeout(galleryResizeTimer);
+            galleryResizeTimer = setTimeout(updateMobileTrackPosition, 50);
+        };
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => setTimeout(updateMobileTrackPosition, 180));
+
+        // Initial setup for mobile track position across key lifecycles
+        updateMobileTrackPosition();
+        setTimeout(updateMobileTrackPosition, 60);
+        setTimeout(updateMobileTrackPosition, 300);
+        setTimeout(updateMobileTrackPosition, 1000);
+
+        // Recalculate as soon as the loader exit event fires
+        document.addEventListener('gce:loaderDone', () => {
+            setTimeout(updateMobileTrackPosition, 50);
+            setTimeout(updateMobileTrackPosition, 350);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(updateMobileTrackPosition, 100);
+        });
+
+        // When Section 2 scrolls into view, re-check mobile alignment
+        if ('IntersectionObserver' in window && gallerySection) {
+            const spacesObserver = new IntersectionObserver((entries) => {
+                if (entries[0] && entries[0].isIntersecting) {
+                    updateMobileTrackPosition();
+                }
+            }, { threshold: 0.1 });
+            spacesObserver.observe(gallerySection);
+        }
+
+        // Prevent accidental horizontal drift on mobile devices
+        window.addEventListener('scroll', () => {
+            if (window.scrollX !== 0) {
+                window.scrollTo(0, window.scrollY);
+            }
+        }, { passive: true });
+
+        // Keyboard navigation (Left / Right arrow keys when gallery is in view)
+        window.addEventListener('keydown', (e) => {
+            if (!gallerySection) return;
+            const rect = gallerySection.getBoundingClientRect();
+            const isInView = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.25;
+            if (!isInView) return;
+
+            if (e.key === 'ArrowRight') {
+                if (activeIndex < cards.length - 1) {
+                    setActiveSpace(activeIndex + 1);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (activeIndex > 0) {
+                    setActiveSpace(activeIndex - 1);
+                }
+            }
+        });
+
+        // Smooth scroll to gallery from Hero CTA and Scroll Mouse Indicator
+        if (exploreHeroBtn) {
+            exploreHeroBtn.addEventListener('click', () => {
+                gallerySection.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        if (scrollIndicator) {
+            scrollIndicator.addEventListener('click', () => {
+                gallerySection.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
     }
 
     // -------------------------------------------------------------------------

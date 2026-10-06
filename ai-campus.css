@@ -1021,13 +1021,13 @@
 
 @media (max-width: 640px) {
     .ai-orb-wrapper {
-        bottom: 100px;
-        right: 18px;
+        bottom: max(18px, env(safe-area-inset-bottom, 18px));
+        right: 16px;
     }
 
     .ai-orb {
-        width: 56px;
-        height: 56px;
+        width: 48px;
+        height: 48px;
     }
 
     .ai-panel {

@@ -1,0 +1,1188 @@
+/* ==========================================================================
+   Auralis Wedding Hall — Section 3: Check Availability
+   Wove-Style Curved Radial Dial (DD | MM | YYYY) & Luxury Sanctuary Engine
+   ========================================================================== */
+
+:root {
+    --avail-gold: #dfa64a;
+    --avail-gold-light: #f7e0b5;
+    --avail-gold-dim: rgba(223, 166, 74, 0.28);
+    --avail-ivory-bg: #faf7f2;
+    --avail-ivory-card: #fdfbf7;
+    --avail-ivory-sub: #f3ede2;
+    --avail-espresso: #1a1512;
+    --avail-espresso-muted: rgba(26, 21, 18, 0.62);
+    --avail-border-champagne: rgba(200, 168, 124, 0.38);
+    --avail-border-soft: rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   Section Layout & Atmospheric Grand Ballroom Background
+   ========================================================================== */
+
+.availability-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding: 120px 30px 130px 30px;
+    background-color: #050408;
+    overflow: hidden;
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-sizing: border-box;
+}
+
+.availability-bg-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.availability-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+    filter: blur(12px) brightness(0.6) saturate(1.15);
+    transform: scale(1.06);
+}
+
+.availability-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 85% 75% at 50% 30%, rgba(10, 8, 14, 0.42) 0%, rgba(4, 3, 7, 0.88) 75%, #030206 100%),
+        linear-gradient(to bottom, #030408 0%, transparent 22%, transparent 78%, #030408 100%),
+        linear-gradient(to right, rgba(3, 2, 6, 0.75) 0%, transparent 35%, transparent 65%, rgba(3, 2, 6, 0.75) 100%);
+    pointer-events: none;
+}
+
+.availability-ambient-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1100px;
+    height: 700px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(223, 166, 74, 0.16) 0%, rgba(197, 168, 128, 0.06) 50%, transparent 75%);
+    pointer-events: none;
+    z-index: 2;
+    filter: blur(80px);
+}
+
+.availability-container {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    max-width: 1140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Section Header
+   ========================================================================== */
+
+.availability-header {
+    text-align: center;
+    max-width: 780px;
+    margin-bottom: 34px;
+    position: relative;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.availability-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(223, 166, 74, 0.28);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--avail-gold-light);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.availability-eyebrow .eyebrow-sparkle {
+    color: var(--avail-gold);
+    font-size: 12px;
+}
+
+.availability-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+
+.availability-title-accent {
+    font-style: italic;
+    color: var(--avail-gold-light);
+}
+
+.availability-subtitle {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   Editorial Sanctuary Card (Wove-Style Luxury Circular Dial)
+   ========================================================================== */
+
+.availability-stage.wove-stage {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, #fdfbf7 0%, #f7f2ea 60%, #efe7dc 100%);
+    border: 1.5px solid var(--avail-border-champagne);
+    border-radius: 36px;
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.8),
+        0 10px 30px rgba(0, 0, 0, 0.35),
+        0 0 50px rgba(223, 166, 74, 0.15),
+        inset 0 1px 2px #ffffff;
+    padding: 34px 40px 38px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--avail-espresso);
+}
+
+
+
+/* Main Split Body: Left Radial Dial + Right Details */
+.dial-layout-body {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 430px 1fr;
+    gap: 36px;
+    align-items: center;
+    min-height: 440px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Left Side: Circular Arc Radial Dial (Exact Wove Architecture: DD | MM | YYYY)
+   ========================================================================== */
+
+.dial-wheel-container {
+    position: relative;
+    width: 100%;
+    height: 440px;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* Subtle Arc Track SVG Background on Left */
+.dial-track-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    opacity: 0.75;
+}
+
+/* Horizontal Selection Window Highlight */
+.dial-selection-window {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: calc(50% - 34px);
+    height: 68px;
+    border-top: 1px solid rgba(223, 166, 74, 0.35);
+    border-bottom: 1px solid rgba(223, 166, 74, 0.35);
+    background: linear-gradient(90deg, rgba(223, 166, 74, 0.03) 0%, rgba(223, 166, 74, 0.08) 50%, rgba(223, 166, 74, 0.03) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 3-Column Columns Wrapper */
+.dial-columns-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+/* Individual Scrolling Column */
+.dial-column {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.25s ease;
+    border-radius: 16px;
+}
+
+.dial-column:active {
+    cursor: grabbing;
+}
+
+.dial-column:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.dial-col-day {
+    flex: 1.05;
+}
+
+.dial-col-month {
+    flex: 1;
+}
+
+.dial-col-year {
+    flex: 1.35;
+}
+
+/* Column Header (DAY / MONTH / YEAR) */
+.dial-col-header {
+    position: absolute;
+    top: 14px;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(26, 21, 18, 0.45);
+    pointer-events: none;
+    transition: color 0.25s ease;
+}
+
+.dial-column:hover .dial-col-header,
+.dial-column.focused .dial-col-header {
+    color: var(--avail-gold);
+}
+
+/* Swipe Hint */
+.dial-col-swipe-hint {
+    position: absolute;
+    bottom: 12px;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(197, 168, 128, 0.7);
+    pointer-events: none;
+    opacity: 0.65;
+    transition: opacity 0.25s ease;
+}
+
+.dial-column:hover .dial-col-swipe-hint {
+    opacity: 1;
+    color: var(--avail-gold);
+}
+
+/* Viewport with 3D Perspective Cylindrical Drum */
+.dial-col-viewport {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    perspective: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+/* Track holding the items */
+.dial-col-track {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Individual Arc Item for Left (DAY) and Right (YEAR) Wheels */
+.dial-arc-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    pointer-events: auto;
+    cursor: pointer;
+    will-change: transform, opacity;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dial-day-item {
+    width: 96px;
+    height: 56px;
+    justify-content: flex-start;
+    transform-origin: 0 28px;
+}
+
+.dial-year-item {
+    width: 128px;
+    height: 56px;
+    justify-content: flex-end;
+    transform-origin: 128px 28px;
+}
+
+.dial-arc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #a8a29e;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+}
+
+.dial-arc-number {
+    font-family: var(--font-heading), 'Outfit', sans-serif;
+    font-style: italic;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    color: transparent;
+    -webkit-text-stroke: 1.3px rgba(35, 28, 22, 0.38);
+    transition: -webkit-text-stroke-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.dial-day-item .dial-arc-number {
+    margin-left: 10px;
+}
+
+.dial-year-item .dial-arc-number {
+    margin-right: 10px;
+}
+
+.dial-arc-item:hover .dial-arc-number {
+    -webkit-text-stroke-color: var(--avail-gold);
+}
+
+/* Active State for Arc Items (Apex) */
+.dial-arc-item.active .dial-arc-dot {
+    width: 9px;
+    height: 9px;
+    background: #1a1512;
+    box-shadow: 0 0 0 3px rgba(223, 166, 74, 0.45);
+}
+
+.dial-arc-item.active .dial-arc-number {
+    font-size: 42px;
+    font-weight: 900;
+    color: #1a1512;
+    -webkit-text-stroke: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.dial-column.focused .dial-arc-item.active .dial-arc-number {
+    border-bottom: 2.5px solid var(--avail-gold);
+}
+
+/* Center Item for Month (MM) Drum */
+.dial-center-item {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 56px;
+    top: calc(50% - 28px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    cursor: pointer;
+    font-family: var(--font-heading), 'Outfit', sans-serif;
+    font-style: italic;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    color: transparent;
+    -webkit-text-stroke: 1.3px rgba(35, 28, 22, 0.38);
+    will-change: transform, opacity;
+    transition: -webkit-text-stroke-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dial-center-item:hover {
+    -webkit-text-stroke-color: var(--avail-gold);
+}
+
+.dial-center-item.active {
+    font-size: 42px;
+    font-weight: 900;
+    color: #1a1512;
+    -webkit-text-stroke: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.dial-column.focused .dial-center-item.active {
+    border-bottom: 2.5px solid var(--avail-gold);
+}
+
+/* Separator Divider | between columns */
+.dial-column-divider {
+    font-family: var(--font-heading), 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--avail-gold);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.65;
+    padding: 0 2px;
+}
+
+/* Instructions Banner */
+.dial-scroll-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.dial-scroll-indicator .indicator-arrow {
+    font-size: 8px;
+    color: var(--avail-gold);
+}
+
+/* ==========================================================================
+   Right Side: Active Details & Action Panel
+   ========================================================================== */
+
+.dial-detail-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-left: 6px;
+    box-sizing: border-box;
+}
+
+.active-date-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.active-weekday-pill {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #1a1512;
+    padding: 4px 14px;
+    border-radius: 14px;
+    background: rgba(223, 166, 74, 0.22);
+    border: 1px solid rgba(223, 166, 74, 0.45);
+}
+
+.active-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.active-status-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(26, 21, 18, 0.65);
+    letter-spacing: 0.5px;
+}
+
+.active-date-heading-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.active-date-primary {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: #1a1512;
+    letter-spacing: -0.5px;
+}
+
+.active-date-sub {
+    font-size: 14px;
+    color: var(--avail-espresso-muted);
+    line-height: 1.4;
+}
+
+/* Noon / Night Celebration Session Block */
+.session-picker-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.session-picker-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(26, 21, 18, 0.55);
+}
+
+.session-picker-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.session-choice-card {
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.session-choice-card:hover {
+    background: #ffffff;
+    border-color: rgba(223, 166, 74, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.session-choice-card.active {
+    background: #ffffff;
+    border: 1.5px solid var(--avail-gold);
+    box-shadow:
+        0 8px 24px rgba(223, 166, 74, 0.20),
+        inset 0 1px 0 #ffffff;
+}
+
+.choice-icon-col {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.choice-text-col {
+    flex: 1;
+    overflow: hidden;
+}
+
+.choice-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.choice-title {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1512;
+}
+
+.choice-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(26, 21, 18, 0.7);
+}
+
+.choice-time {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #8c6d48;
+    font-variant-numeric: tabular-nums;
+}
+
+.choice-radio-mark {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+}
+
+.session-choice-card.active .choice-radio-mark {
+    background: var(--avail-gold);
+    border-color: var(--avail-gold);
+    color: #ffffff;
+}
+
+/* Check Availability CTA Button (Luxury Espresso / Gold) */
+.cta-action-row {
+    margin-top: 6px;
+}
+
+.availability-cta-btn {
+    position: relative;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 28px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #1f1812 0%, #2b1f16 50%, #1f160f 100%);
+    border: 1px solid rgba(223, 166, 74, 0.5);
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.45),
+        0 0 20px rgba(223, 166, 74, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.availability-cta-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(223, 166, 74, 0.85);
+    box-shadow:
+        0 18px 46px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(223, 166, 74, 0.3);
+}
+
+.availability-cta-btn:active {
+    transform: translateY(1px) scale(0.99);
+}
+
+.availability-cta-btn .cta-text {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.availability-cta-btn .cta-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--avail-gold);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.availability-cta-btn .cta-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+.availability-cta-btn:hover .cta-arrow {
+    transform: translateX(5px);
+}
+
+.cta-glow-pulse {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(223, 166, 74, 0.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: cta-sheen 4.5s ease-in-out infinite 1.5s;
+    pointer-events: none;
+}
+
+@keyframes cta-sheen {
+    0% { transform: translateX(-100%); }
+    40%, 100% { transform: translateX(100%); }
+}
+
+.availability-cta-btn.is-checking {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.availability-cta-btn.is-checking .cta-arrow {
+    display: none;
+}
+
+.availability-cta-btn.is-checking .cta-text::after {
+    content: '...';
+    display: inline-block;
+    animation: dots-pulse 1.2s infinite;
+}
+
+@keyframes dots-pulse {
+    0%, 20% { content: '.'; }
+    40%, 60% { content: '..'; }
+    80%, 100% { content: '...'; }
+}
+
+/* ==========================================================================
+   Availability Result Modal / Drawer
+   ========================================================================== */
+
+.availability-result-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(3, 2, 5, 0.78);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.availability-result-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.result-card {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    border-radius: 28px;
+    background: #0f0c13;
+    border: 1px solid rgba(223, 166, 74, 0.35);
+    box-shadow:
+        0 35px 90px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(223, 166, 74, 0.22);
+    padding: 38px 36px 34px 36px;
+    box-sizing: border-box;
+    transform: scale(0.92) translateY(18px);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    color: #ffffff;
+}
+
+.availability-result-panel.active .result-card {
+    transform: scale(1) translateY(0);
+}
+
+.result-close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.result-close-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.08);
+}
+
+.result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.result-badge.available {
+    background: rgba(52, 211, 153, 0.15);
+    border: 1px solid rgba(52, 211, 153, 0.45);
+    color: #6ee7b7;
+}
+
+.result-badge.reserved {
+    background: rgba(244, 114, 182, 0.15);
+    border: 1px solid rgba(244, 114, 182, 0.45);
+    color: #f472b6;
+}
+
+.result-date-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 34px;
+    font-weight: 500;
+    line-height: 1.15;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.result-session-subtitle {
+    font-size: 14px;
+    color: var(--avail-gold-light);
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.result-body-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 24px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.result-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.result-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.detail-val {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.result-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.result-btn-primary {
+    flex: 1;
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #dfa64a 0%, #b88630 100%);
+    border: none;
+    color: #1a120b;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(223, 166, 74, 0.45);
+}
+
+.result-btn-secondary {
+    min-height: 48px;
+    padding: 12px 20px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.result-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints (Tablet & Mobile Wove Style)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .availability-section {
+        padding: 90px 20px 110px 20px;
+    }
+
+    .availability-title {
+        font-size: 42px;
+    }
+
+    .availability-stage.wove-stage {
+        padding: 30px 24px 34px 24px;
+    }
+
+    .dial-layout-body {
+        grid-template-columns: 360px 1fr;
+        gap: 24px;
+    }
+
+    .dial-seg {
+        font-size: 24px;
+    }
+
+    .dial-item.active .dial-seg {
+        font-size: 32px;
+    }
+
+    .active-date-primary {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 768px) {
+    .availability-section {
+        padding: 56px 14px 115px 14px;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+    }
+
+    .availability-header {
+        margin-bottom: 20px;
+        padding: 0 8px;
+    }
+
+    .availability-eyebrow {
+        font-size: 9.5px;
+        padding: 6px 14px;
+        margin-bottom: 10px;
+    }
+
+    .availability-title {
+        font-size: 32px;
+        line-height: 1.15;
+    }
+
+    .availability-subtitle {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .availability-stage.wove-stage {
+        padding: 22px 14px 26px 14px;
+        border-radius: 26px;
+    }
+
+    .dial-mode-bar {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .dial-mode-tab {
+        padding: 6px 10px;
+        font-size: 10.5px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    /* Stack on mobile: dial wheel on top, details below */
+    .dial-layout-body {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        min-height: auto;
+    }
+
+    .dial-wheel-container {
+        height: 240px;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        padding: 0 4px;
+    }
+
+    .dial-col-viewport {
+        height: 190px;
+    }
+
+    .dial-day-item {
+        width: 76px;
+        height: 44px;
+        transform-origin: 0 22px;
+    }
+
+    .dial-year-item {
+        width: 104px;
+        height: 44px;
+        transform-origin: 104px 22px;
+    }
+
+    .dial-center-item {
+        height: 44px;
+        top: calc(50% - 22px);
+    }
+
+    .dial-arc-number,
+    .dial-center-item {
+        font-size: 20px;
+    }
+
+    .dial-arc-item.active .dial-arc-number,
+    .dial-center-item.active {
+        font-size: 28px;
+    }
+
+    .dial-column-divider {
+        font-size: 24px;
+        padding: 0 1px;
+    }
+
+    .dial-selection-window {
+        height: 48px;
+        top: calc(50% - 24px);
+    }
+
+    .dial-detail-panel {
+        padding-left: 0;
+        gap: 16px;
+    }
+
+    .active-date-primary {
+        font-size: 28px;
+    }
+
+    .session-picker-cards {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .session-choice-card {
+        padding: 10px 12px;
+    }
+
+    .availability-cta-btn {
+        min-height: 50px;
+        padding: 12px 20px;
+    }
+
+    .availability-cta-btn .cta-text {
+        font-size: 14px;
+    }
+
+    .result-card {
+        padding: 28px 20px 24px 20px;
+        border-radius: 22px;
+    }
+
+    .result-date-title {
+        font-size: 26px;
+    }
+
+    .result-details-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .result-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .result-btn-primary,
+    .result-btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .availability-title {
+        font-size: 27px;
+    }
+
+    .dial-seg {
+        font-size: 19px;
+    }
+
+    .dial-item.active .dial-seg {
+        font-size: 26px;
+    }
+
+    .active-date-primary {
+        font-size: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dial-item,
+    .session-choice-card,
+    .availability-cta-btn,
+    .result-card {
+        transition: none !important;
+        animation: none !important;
+    }
+}

@@ -1,6 +1,6 @@
 /**
- * AI Campus Intelligence — Immersive Interface Engine
- * Ghousia College of Engineering
+ * Auralis Wedding Concierge — Immersive Venue Intelligence
+ * Auralis Wedding Hall & Convention Center
  * 
  * Architecture:
  *   Orb Controller → Panel Lifecycle → Boot Sequence → Welcome → Conversation → Voice
@@ -11,54 +11,46 @@
     'use strict';
 
     // =========================================================================
-    // 1. CAMPUS KNOWLEDGE BASE — Pre-built responses
+    // 1. VENUE KNOWLEDGE BASE — Pre-built wedding venue responses
     // =========================================================================
 
     const campusKnowledge = {
-        'admissions': {
-            query: '🎓 Admissions',
-            response: `Ghousia College of Engineering offers admissions through multiple pathways:\n\n**Undergraduate Programs (B.E.)**\n• Computer Science & Engineering\n• Electronics & Communication Engineering\n• Mechanical Engineering\n• Civil Engineering\n• Electrical & Electronics Engineering\n• Information Science & Engineering\n\n**Admission Process**\nAdmissions are conducted through the Karnataka Examinations Authority (KEA) via CET and COMEDK counselling. Management quota seats are also available.\n\n**Key Dates (2026-27)**\n• CET Counselling: July – August\n• COMEDK Counselling: August\n• Direct Admission: Open until seats are filled\n\n**Documents Required**\n• 10th & 12th Mark Sheets\n• CET/COMEDK Rank Card\n• Transfer Certificate\n• Migration Certificate\n• Passport-size Photographs\n\nFor detailed admission guidance, contact the admissions office at the main campus or visit during working hours (9 AM – 5 PM).`
+        'banquets': {
+            query: '🏰 Banquet Halls',
+            response: `**Auralis Wedding Hall & Convention Center** offers world-class spaces for every scale of celebration:\n\n🏰 **The Grand Royal Ballroom**\n• Seating Capacity: 1,500 guests (Floating capacity: 2,500+ guests)\n• Magnificent double-height ceilings with imported crystal chandeliers\n• Completely pillarless layout ensuring panoramic, unobstructed sightlines\n• Central climate control and professional acoustic engineering\n\n✨ **The Crystal Hall**\n• Seating Capacity: 600 – 800 guests\n• Ideal for Sangeet, Mehendi, Engagement ceremonies, and private receptions\n• Dedicated stage lighting rig, runway, and state-of-the-art sound system\n\n🌿 **The Imperial Lawn**\n• Manicured open-air garden accommodating 1,200+ guests\n• Romantic fairy-light canopies and illuminated landscape water features\n• Perfect for outdoor wedding pheras and sunset cocktail dinners\n\n🍽️ **Grand Dining Complex**\n• Dedicated multi-floor banquet dining seating 800 guests per batch\n• Separate pure-vegetarian and live culinary counter zones`
         },
-        'faculty': {
-            query: '🧑‍🏫 Faculty',
-            response: `Our campus is home to a distinguished faculty of over 150 educators, researchers, and industry professionals.\n\n**Faculty Highlights**\n• 25+ PhD holders across departments\n• Faculty members with publications in IEEE, Springer, and Elsevier journals\n• Industry-experienced professors from companies like Infosys, Wipro, and TCS\n• Regular faculty development programs and research grants\n\n**Department-wise Leadership**\n• CSE: Experienced faculty specializing in AI, Machine Learning, and Cloud Computing\n• ECE: Experts in VLSI Design, Embedded Systems, and Signal Processing\n• Mechanical: Specialists in Thermal Engineering, CAD/CAM, and Robotics\n• Civil: Professionals in Structural Engineering and Environmental Sciences\n\n**Faculty-Student Ratio**\nWe maintain a healthy 1:15 faculty-to-student ratio, ensuring personalized attention and mentorship for every student.\n\nFaculty profiles and contact details are available at the department offices.`
+        'packages': {
+            query: '💍 Wedding Packages',
+            response: `We offer bespoke, all-inclusive celebration packages crafted for an effortless wedding experience:\n\n👑 **The Royal Imperial Package**\n• Complete venue exclusivity (Grand Ballroom + Crystal Hall + Lawn)\n• Multi-day wedding access with early setup window\n• Royal Bridal Suite & Groom's Lounge included\n• Full LED stage backdrop, ambient architectural lighting & concert acoustic rig\n\n💎 **The Grand Celebration Package**\n• Full Grand Ballroom & Dining Hall access\n• Thematic floral stage decor, grand carpeted entrance & red-carpet walkway\n• Complimentary 2 Deluxe VIP suites for family\n• Dedicated professional valet parking team (400+ vehicles)\n\n✨ **Intimate Celebrations Package**\n• Crystal Hall access for Engagements, Sangeet, or Reception\n• Flexible timing & customizable setup options\n\nContact our events desk for a tailored quotation tailored to your auspicious dates.`
         },
-        'departments': {
-            query: '📚 Departments',
-            response: `Ghousia College of Engineering houses six major engineering departments, each with state-of-the-art infrastructure.\n\n**Departments**\n\n🖥️ **Computer Science & Engineering**\nFocuses on AI, Data Science, Web Technologies, and Software Engineering. Modern computing labs with 200+ workstations.\n\n📡 **Electronics & Communication**\nSpecializes in VLSI, IoT, Embedded Systems, and Communication Networks. Advanced signal processing and RF labs.\n\n⚙️ **Mechanical Engineering**\nCovers Manufacturing, Thermal Sciences, CAD/CAM, and Robotics. Fully equipped workshop and CNC training center.\n\n🏗️ **Civil Engineering**\nFocuses on Structural Analysis, Geotechnical Engineering, and Environmental Engineering. Concrete and material testing labs.\n\n⚡ **Electrical & Electronics**\nSpecializes in Power Systems, Control Systems, and Renewable Energy. High-voltage and electrical machines labs.\n\n💻 **Information Science & Engineering**\nCovers Database Systems, Network Security, Cloud Computing, and Full-Stack Development.\n\nAll departments are affiliated to VTU, Belagavi and accredited by AICTE.`
+        'catering': {
+            query: '🍽️ Catering & Dining',
+            response: `Culinary excellence is at the heart of every memorable wedding at Auralis:\n\n🍛 **Grand Culinary Feasts**\n• Multi-cuisine traditional and contemporary wedding menus\n• Authentic South Indian traditional banana leaf feasts\n• Royal North Indian, Mughlai & Awadhi delicacies\n• Global gourmet counters: Italian pasta bars, Pan-Asian woks & live Chaat bazaars\n\n🍰 **Dessert & Beverage Lounges**\n• Artisanal mocktail bars & welcome drink lounges\n• Live traditional sweet stations (hot Jalebi, Rabdi, Malpua, Kulfi)\n• Custom designer wedding cake presentations\n\n✨ **Hygienic Mega-Kitchen**\n• Commercial-grade stainless steel kitchen with cold storage\n• Strict separation of pure-vegetarian and non-vegetarian preparation areas\n• Verified FSSAI compliance and 24/7 RO water purification`
         },
-        'laboratories': {
-            query: '🧪 Laboratories',
-            response: `Our campus features 40+ specialized laboratories designed for cutting-edge research and hands-on learning.\n\n**Flagship Labs**\n\n🔬 **Advanced Computing Lab**\nEquipped with high-performance workstations, GPU clusters for AI/ML training, and cloud computing infrastructure.\n\n🤖 **Robotics & Automation Lab**\nIndustrial robots, 3D printers, Arduino/Raspberry Pi stations, and drone development kits.\n\n📊 **Data Science & Analytics Lab**\nDedicated servers for big data processing, Hadoop clusters, and visualization workstations.\n\n🔧 **CNC & Manufacturing Lab**\nCNC machines, lathe machines, milling machines, and precision measurement instruments.\n\n⚡ **Power Electronics Lab**\nAdvanced inverters, converters, SCADA systems, and PLC programming stations.\n\n🌐 **Networking & Security Lab**\nCisco networking equipment, penetration testing setups, and cybersecurity simulation tools.\n\n**Lab Hours**: Monday – Saturday, 8:30 AM – 5:30 PM\nAll labs are air-conditioned and equipped with high-speed internet.`
+        'suites': {
+            query: '🛏️ Bridal Suites & Rooms',
+            response: `We provide comfortable, luxury accommodations on-site for the couple and key family members:\n\n👰 **Royal Bridal Suite**\n• Spacious makeup salon area with Hollywood vanity mirrors\n• Ample plush lounge seating for bridesmaids & close family\n• Designer en-suite bathroom with luxury dressing room\n• Climate-controlled with digital safe for jewelry & valuables\n\n🤵 **Groom's Lounge**\n• Dedicated preparation lounge with full-length grooming mirrors\n\n🏨 **Guest Accommodation**\n• 30+ air-conditioned deluxe guest rooms for out-of-town wedding attendees\n• 24-hour concierge, hot water, and housekeeping support`
         },
-        'navigation': {
-            query: '📍 Campus Navigation',
-            response: `Ghousia College of Engineering spans a beautiful 15-acre campus in Ramanagaram, Karnataka.\n\n**Campus Layout**\n\n🏛️ **Main Block** (Building A)\nAdministration, Principal's Office, Conference Halls, Admissions Office\n\n📚 **Academic Block** (Building B & C)\nClassrooms, Seminar Halls, Department Offices, Faculty Rooms\n\n🧪 **Lab Complex** (Building D)\nAll engineering laboratories, Research Centers, Innovation Hub\n\n📖 **Central Library**\n30,000+ books, digital library with IEEE/Springer access, reading rooms, discussion zones\n\n🏟️ **Sports Complex**\nCricket ground, basketball court, volleyball court, indoor games, gymnasium\n\n🏠 **Hostel Block**\nSeparate boys' and girls' hostels with 500+ bed capacity\n\n🍽️ **Cafeteria & Canteen**\nMain canteen, juice center, and snack counters\n\n**Campus Address**\nGhousia College of Engineering\nRamanagaram, Karnataka 562159\n\nThe campus is located just 50 km from Bengaluru, easily accessible via the Mysuru Highway (NH-275).`
+        'decor': {
+            query: '🌸 Decor & Themes',
+            response: `Transform your vision into reality with our expert decor artisans:\n\n✨ **Decor Styles & Concepts**\n• **Royal Palace Heritage**: Regal golden carvings, traditional temple motifs, grand floral mandaps\n• **Modern Glamour**: Crystal chandeliers, mirrored aisles, fairy light canopies, LED pixel staging\n• **Floral Dreamscape**: Fresh imported exotic flowers, pastel orchids, fragrant jasmine garlands\n• **Rustic Garden Chic**: Wooden cabanas, vintage lanterns, foliage arches on the Imperial Lawn\n\n📸 **Photo Opportunities**\n• Dramatic entryway with royal fountain reflections\n• Dedicated photo-booth installations and 360-degree video booths`
         },
-        'transportation': {
-            query: '🚌 Transportation',
-            response: `The college operates a comprehensive transport network connecting students from across the region.\n\n**Bus Routes**\n• 15+ dedicated college buses\n• Routes covering Bengaluru, Channapatna, Mandya, Mysuru, and surrounding towns\n• GPS-tracked buses for real-time location monitoring\n\n**Route Highlights**\n🚌 Route 1: Bengaluru (Majestic) → Ramanagaram Campus\n🚌 Route 2: Kengeri → Bidadi → Ramanagaram Campus\n🚌 Route 3: Channapatna → Ramanagaram Campus\n🚌 Route 4: Mandya → Maddur → Ramanagaram Campus\n🚌 Route 5: Mysuru → Ramanagaram Campus\n\n**Timings**\n• Morning pickup: 7:00 AM – 8:30 AM\n• Evening drop: 5:00 PM – 6:30 PM\n\n**Transport Fees**\nFees vary by distance. Contact the transport office for exact pricing.\n\n**How to Reach by Self**\n• By Road: NH-275 (Bengaluru-Mysuru Highway), Ramanagaram exit\n• By Train: Ramanagaram Railway Station (2 km from campus)\n• By Bus: KSRTC buses to Ramanagaram town`
+        'parking': {
+            query: '🚗 Parking & Valet',
+            response: `Guest convenience and smooth arrivals are guaranteed:\n\n🚗 **Parking Capacity**\n• Dedicated on-site paved parking for 400+ four-wheelers and 300+ two-wheelers\n• Additional designated overflow parking for mega-events\n\n🎩 **Complimentary Valet Services**\n• Professional, uniformed valet parking staff on duty\n• Efficient vehicle intake and retrieval tracking system\n• Wide dual-lane entry and exit lanes ensuring zero traffic delays`
         },
-        'hostel': {
-            query: '🏠 Hostel',
-            response: `Our residential facilities provide a safe, comfortable, and enriching living experience for students.\n\n**Accommodation**\n• Separate hostels for boys and girls\n• 500+ bed capacity across multiple blocks\n• Double and triple sharing rooms available\n• Fully furnished rooms with beds, study tables, wardrobes, and fans\n\n**Facilities**\n🛡️ 24/7 security with CCTV surveillance\n📶 Wi-Fi connectivity across all hostel blocks\n🔌 Uninterrupted power supply with generator backup\n🧺 Laundry services available\n💧 24/7 hot and cold water supply\n📺 Common room with TV and indoor games\n📖 Dedicated study halls for night study\n\n**Mess & Food**\n• Hygienic mess serving vegetarian and non-vegetarian meals\n• Breakfast, lunch, evening snacks, and dinner included\n• Special meals on weekends and festivals\n\n**Hostel Fees (Per Year)**\nApproximate range: ₹45,000 – ₹65,000 (varies by room type)\n\nHostel admissions open alongside academic admissions. Priority is given to outstation students.`
+        'booking': {
+            query: '📅 Booking & Dates',
+            response: `Secure your auspicious wedding dates at Auralis:\n\n📋 **Booking Steps**\n1. **Date Consultation**: Check auspicious muhurtham dates and venue slot availability\n2. **Private Venue Tour**: Walk through the Grand Ballroom, suites, and lawn\n3. **Custom Proposal**: Receive a comprehensive, transparent price estimate\n4. **Advance Reservation**: Lock your chosen dates with a confirmed deposit\n\n⏰ **Concierge Office Hours**\nOpen daily from 9:00 AM to 8:00 PM for private viewing appointments.\n\nUse the 'Schedule Venue Tour' button or speak directly with our wedding coordinator.`
         },
-        'cafeteria': {
-            query: '🍽 Cafeteria',
-            response: `The campus cafeteria is a vibrant hub for students, serving fresh and affordable meals throughout the day.\n\n**Main Canteen**\n• Capacity: 300+ seats\n• Serves breakfast, lunch, and evening snacks\n• Both vegetarian and non-vegetarian options\n• Clean, hygienic kitchen with FSSAI certification\n\n**Menu Highlights**\n🍛 South Indian thali – ₹60\n🍝 Noodles & Chinese – ₹40-70\n🍕 Snacks & Fast Food – ₹20-50\n☕ Tea & Coffee – ₹10-15\n🥤 Fresh juices & Milkshakes – ₹25-40\n\n**Timings**\n• Breakfast: 7:30 AM – 9:30 AM\n• Lunch: 12:00 PM – 2:00 PM\n• Snacks: 3:30 PM – 5:00 PM\n• Evening: 5:00 PM – 7:00 PM (juice & snack counters)\n\n**Additional Outlets**\n• Juice corner near the library\n• Tea stall at the engineering block\n• Stationery and xerox shop inside the canteen building\n\nThe cafeteria is a popular hangout spot, especially during breaks!`
-        },
-        'events': {
-            query: '🎉 Events',
-            response: `Ghousia College of Engineering hosts a dynamic calendar of technical, cultural, and sports events year-round.\n\n**Annual Flagship Events**\n\n🎪 **TechFest (GHOUSIA TECH SUMMIT)**\nThe annual technical festival featuring coding competitions, hackathons, robotics challenges, paper presentations, and workshops. Attracts participants from 50+ colleges across Karnataka.\n\n🎭 **Cultural Fest (GHOUSIA UTSAV)**\nA 3-day extravaganza with music, dance, drama, fashion shows, and literary events. Features celebrity performances and DJ nights.\n\n🏆 **Sports Meet (GHOUSIA OLYMPIAD)**\nInter-college sports tournament covering cricket, football, basketball, volleyball, athletics, and indoor games.\n\n**Regular Events**\n• Monthly coding contests and tech talks\n• Industry expert guest lectures\n• Workshop series on emerging technologies\n• NSS and community service drives\n• Innovation and startup pitch competitions\n\n**Student Clubs**\n• Coding Club • Robotics Club • Literary Club\n• Photography Club • Music Club • Entrepreneurship Cell\n\nStay updated through the campus notice boards and official social media channels!`
-        },
-        'placements': {
-            query: '💼 Placements',
-            response: `Our Training & Placement Cell works tirelessly to connect students with top recruiters and career opportunities.\n\n**Placement Highlights (2025-26)**\n• 85%+ placement rate across all branches\n• 120+ companies visited for campus recruitment\n• Highest package: ₹12 LPA\n• Average package: ₹4.5 LPA\n\n**Top Recruiters**\n🏢 Infosys • Wipro • TCS • Cognizant • HCL\n🏢 Accenture • Capgemini • Mphasis • L&T Infotech\n🏢 Amazon • Flipkart (internships)\n🏢 Bosch • Toyota Kirloskar • Caterpillar\n\n**Placement Support**\n• Pre-placement training from 5th semester\n• Aptitude and soft skills workshops\n• Mock interviews and group discussions\n• Resume building and LinkedIn profile guidance\n• Industry mentorship programs\n\n**Internship Opportunities**\n• Mandatory industry internships in 6th & 7th semesters\n• Partnerships with 50+ companies for internship placements\n• Stipended internships available\n\n**Contact Placement Cell**\nTraining & Placement Office, Main Block\nOpen: Monday – Friday, 9 AM – 5 PM`
+        'atmospheres': {
+            query: '🌦️ Atmosphere Engine',
+            response: `**The Auralis Cinematic Atmosphere Engine** is our unique digital showcase allowing couples and families to experience the venue under multiple real-time weather conditions:\n\n☀️ **Day Ceremony**: Experience how natural sunbeams illuminate the golden wood and glass facade for daytime rituals and weddings.\n🌧️ **Monsoon Romance**: Witness the poetry of rain as raindrops glisten on the glass facade with tranquil acoustic rain soundscapes.\n🌙 **Starry Night**: Preview how the venue illuminates after sunset with majestic architectural floodlights and starlight ambiance.`
         }
     };
 
     // Fallback response for unknown queries
-    const fallbackResponse = `Thank you for your question. While I'm currently operating with a curated knowledge base about Ghousia College of Engineering, I can help you with the following topics:\n\n• 🎓 Admissions & Programs\n• 🧑‍🏫 Faculty Information\n• 📚 Academic Departments\n• 🧪 Laboratories & Research\n• 📍 Campus Navigation & Directions\n• 🚌 Transportation & Routes\n• 🏠 Hostel & Accommodation\n• 🍽 Cafeteria & Dining\n• 🎉 Events & Activities\n• 💼 Placements & Careers\n\nPlease try one of the suggestion chips below, or ask a specific question about any of these topics. In the future, I'll be connected to live campus databases for real-time, personalized responses.`;
+    const fallbackResponse = `Thank you for your inquiry. As the Auralis Wedding Concierge, I can assist you with:\n\n• 🏰 Banquet Halls & Capacity\n• 💍 Wedding Packages & Pricing\n• 🍽️ Catering & Dining Menus\n• 🛏️ Bridal Suites & Accommodation\n• 🌸 Decor Themes & Mandap Styles\n• 🚗 Parking & Valet Services\n• 📅 Booking Muhurtham Dates\n• 🌦️ Atmosphere Weather Modes\n\nPlease select any of the topics below or feel free to ask a specific question about your upcoming celebration.`;
 
     // =========================================================================
     // 2. DOM CREATION — Build all elements programmatically
@@ -70,21 +62,14 @@
         orbWrapper.className = 'ai-orb-wrapper';
         orbWrapper.id = 'ai-orb-wrapper';
         orbWrapper.innerHTML = `
-            <button class="ai-orb" id="ai-orb-btn" aria-label="Open Campus Intelligence">
+            <button class="ai-orb" id="ai-orb-btn" aria-label="Open Wedding Concierge">
                 <span class="ai-orb-glow"></span>
                 <span class="ai-orb-glow-outer"></span>
                 <svg class="ai-orb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 10v2"/>
-                    <circle cx="12" cy="16" r="2"/>
-                    <path d="M12 18v2"/>
-                    <path d="M8 22h8"/>
-                    <path d="M7 8a5 5 0 0 1 0-4"/>
-                    <path d="M17 8a5 5 0 0 0 0-4"/>
-                    <path d="M5 11a8 8 0 0 1-1-6"/>
-                    <path d="M19 11a8 8 0 0 0 1-6"/>
+                    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
                 </svg>
             </button>
-            <span class="ai-orb-label">Campus Intelligence</span>
+            <span class="ai-orb-label">Wedding Concierge</span>
         `;
 
         // -- Backdrop Overlay --
@@ -102,9 +87,9 @@
             <div class="ai-panel-header">
                 <div class="ai-panel-title-badge">
                     <span class="ai-panel-status-dot"></span>
-                    <span class="ai-panel-title-text">Campus Intelligence</span>
+                    <span class="ai-panel-title-text">Auralis Wedding Concierge</span>
                 </div>
-                <button class="ai-close-btn" id="ai-close-btn" aria-label="Close Campus Intelligence">
+                <button class="ai-close-btn" id="ai-close-btn" aria-label="Close Wedding Concierge">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -115,67 +100,65 @@
             <div class="ai-panel-body" id="ai-panel-body">
                 <!-- Boot Sequence -->
                 <div class="ai-boot-sequence" id="ai-boot-sequence">
-                    <div class="ai-boot-title" id="ai-boot-title">Campus Intelligence</div>
+                    <div class="ai-boot-title" id="ai-boot-title">Auralis Concierge</div>
                     <div class="ai-boot-subtitle" id="ai-boot-subtitle">Initializing...</div>
                     <div class="ai-boot-phases" id="ai-boot-phases">
                         <div class="ai-boot-phase" data-phase="0">
                             <div class="ai-boot-phase-label">
                                 <span class="ai-boot-phase-check">✓</span>
-                                Loading Campus Knowledge
+                                Loading Banquet Spaces
                             </div>
                             <div class="ai-boot-progress-track"><div class="ai-boot-progress-fill"></div></div>
                         </div>
                         <div class="ai-boot-phase" data-phase="1">
                             <div class="ai-boot-phase-label">
                                 <span class="ai-boot-phase-check">✓</span>
-                                Loading Academic Information
+                                Loading Wedding Packages
                             </div>
                             <div class="ai-boot-progress-track"><div class="ai-boot-progress-fill"></div></div>
                         </div>
                         <div class="ai-boot-phase" data-phase="2">
                             <div class="ai-boot-phase-label">
                                 <span class="ai-boot-phase-check">✓</span>
-                                Loading Faculty Directory
+                                Loading Culinary Menus
                             </div>
                             <div class="ai-boot-progress-track"><div class="ai-boot-progress-fill"></div></div>
                         </div>
                         <div class="ai-boot-phase" data-phase="3">
                             <div class="ai-boot-phase-label">
                                 <span class="ai-boot-phase-check">✓</span>
-                                Loading Campus Navigation
+                                Loading Bridal Suite Directory
                             </div>
                             <div class="ai-boot-progress-track"><div class="ai-boot-progress-fill"></div></div>
                         </div>
                         <div class="ai-boot-phase" data-phase="4">
                             <div class="ai-boot-phase-label">
                                 <span class="ai-boot-phase-check">✓</span>
-                                Connecting Intelligence Core
+                                Connecting Concierge Intelligence
                             </div>
                             <div class="ai-boot-progress-track"><div class="ai-boot-progress-fill"></div></div>
                         </div>
                     </div>
-                    <div class="ai-boot-ready" id="ai-boot-ready">Campus Intelligence Ready</div>
+                    <div class="ai-boot-ready" id="ai-boot-ready">Wedding Concierge Ready</div>
                 </div>
 
                 <!-- Welcome Screen -->
                 <div class="ai-welcome" id="ai-welcome">
-                    <div class="ai-welcome-greeting" id="ai-welcome-greeting">Hello.</div>
+                    <div class="ai-welcome-greeting" id="ai-welcome-greeting">Welcome to Auralis.</div>
                     <div class="ai-welcome-description" id="ai-welcome-desc">
-                        I'm your Campus Intelligence. I'm trained to help students, parents, faculty members, and visitors explore every part of the campus experience.
+                        I am your dedicated Wedding Concierge. How may I assist you with your dream celebration today?
                     </div>
                     <div class="ai-welcome-divider" id="ai-welcome-divider"></div>
-                    <div class="ai-welcome-askme" id="ai-welcome-askme">Ask me anything.</div>
+                    <div class="ai-welcome-askme" id="ai-welcome-askme">Explore Venue Information</div>
                     <div class="ai-chips-container" id="ai-chips-container">
-                        <button class="ai-chip" data-topic="admissions"><span class="ai-chip-emoji">🎓</span> Admissions</button>
-                        <button class="ai-chip" data-topic="faculty"><span class="ai-chip-emoji">🧑‍🏫</span> Faculty</button>
-                        <button class="ai-chip" data-topic="departments"><span class="ai-chip-emoji">📚</span> Departments</button>
-                        <button class="ai-chip" data-topic="laboratories"><span class="ai-chip-emoji">🧪</span> Laboratories</button>
-                        <button class="ai-chip" data-topic="navigation"><span class="ai-chip-emoji">📍</span> Campus Navigation</button>
-                        <button class="ai-chip" data-topic="transportation"><span class="ai-chip-emoji">🚌</span> Transportation</button>
-                        <button class="ai-chip" data-topic="hostel"><span class="ai-chip-emoji">🏠</span> Hostel</button>
-                        <button class="ai-chip" data-topic="cafeteria"><span class="ai-chip-emoji">🍽</span> Cafeteria</button>
-                        <button class="ai-chip" data-topic="events"><span class="ai-chip-emoji">🎉</span> Events</button>
-                        <button class="ai-chip" data-topic="placements"><span class="ai-chip-emoji">💼</span> Placements</button>
+                        <button class="ai-chip" data-topic="banquets"><span class="ai-chip-emoji">🏰</span> Banquet Halls</button>
+                        <button class="ai-chip" data-topic="packages"><span class="ai-chip-emoji">💍</span> Wedding Packages</button>
+                        <button class="ai-chip" data-topic="catering"><span class="ai-chip-emoji">🍽️</span> Catering & Dining</button>
+                        <button class="ai-chip" data-topic="suites"><span class="ai-chip-emoji">🛏️</span> Bridal Suites</button>
+                        <button class="ai-chip" data-topic="decor"><span class="ai-chip-emoji">🌸</span> Decor & Themes</button>
+                        <button class="ai-chip" data-topic="parking"><span class="ai-chip-emoji">🚗</span> Parking & Valet</button>
+                        <button class="ai-chip" data-topic="booking"><span class="ai-chip-emoji">📅</span> Booking & Dates</button>
+                        <button class="ai-chip" data-topic="atmospheres"><span class="ai-chip-emoji">🌦️</span> Atmosphere Engine</button>
                     </div>
                 </div>
 
@@ -199,7 +182,7 @@
 
             <div class="ai-input-bar">
                 <div class="ai-input-wrapper">
-                    <input type="text" class="ai-input" id="ai-input" placeholder="Ask anything about the campus..." autocomplete="off" />
+                    <input type="text" class="ai-input" id="ai-input" placeholder="Ask about banquet halls, menus, wedding dates..." autocomplete="off" />
                 </div>
                 <button class="ai-send-btn" id="ai-send-btn" aria-label="Send message">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -219,20 +202,17 @@
 
             <div class="ai-future-panel">
                 <div class="ai-future-header" id="ai-future-header">
-                    <span class="ai-future-title">Campus Intelligence · Future Capabilities</span>
+                    <span class="ai-future-title">Wedding Concierge · Future Capabilities</span>
                     <span class="ai-future-toggle" id="ai-future-toggle">▼</span>
                 </div>
                 <div class="ai-future-list" id="ai-future-list">
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Live academic database</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Real-time event updates</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Classroom navigation</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Faculty availability</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Attendance integration</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Smart timetable assistant</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Admission guidance</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Placement assistance</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Campus weather sync</div>
-                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Voice conversations</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Real-time muhurtham date availability</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Virtual 360° hall & lawn walkthrough</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Interactive culinary banquet customizer</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Guest seating & table arrangement planner</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Mandap & stage decor 3D preview</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Live weather sync with outdoor events</div>
+                    <div class="ai-future-item"><span class="ai-future-bullet"></span> Direct coordinator consultation</div>
                 </div>
             </div>
         `;

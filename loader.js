@@ -13,7 +13,7 @@
     // -------------------------------------------------------------------------
     // SESSION GATE — Skip if already seen this session
     // -------------------------------------------------------------------------
-    const STORAGE_KEY = 'gce_loader_seen';
+    const STORAGE_KEY = 'auralis_loader_seen';
 
     if (sessionStorage.getItem(STORAGE_KEY)) {
         // Already seen this session — bail immediately, show nothing
@@ -42,7 +42,7 @@
         </div>
 
         <div class="loader-title" id="loader-title-text"></div>
-        <div class="loader-subtitle">College of Engineering</div>
+        <div class="loader-subtitle">Wedding Hall & Convention Center</div>
 
         <div class="loader-progress-wrapper">
             <div class="loader-progress-track">
@@ -51,7 +51,7 @@
             <div class="loader-status" id="loader-status-text">Initializing</div>
         </div>
 
-        <div class="loader-meta">Estd. 1980 &nbsp;·&nbsp; Affiliated to VTU, Belagavi</div>
+        <div class="loader-meta">Where Forever Begins &nbsp;·&nbsp; Grand Celebrations</div>
     `;
 
     // -------------------------------------------------------------------------
@@ -74,7 +74,7 @@
 
         // --- Letter-by-letter title animation ---
         const titleEl = document.getElementById('loader-title-text');
-        const titleText = 'GHOUSIA';
+        const titleText = 'AURALIS';
         titleText.split('').forEach((char, i) => {
             const span = document.createElement('span');
             span.textContent = char;
@@ -87,13 +87,13 @@
         const statusText = document.getElementById('loader-status-text');
 
         const stages = [
-            { progress: 12,  text: 'Loading Campus Assets',        delay: 400  },
+            { progress: 12,  text: 'Loading Venue Assets',          delay: 400  },
             { progress: 28,  text: 'Preparing Atmosphere Engine',   delay: 500  },
             { progress: 45,  text: 'Rendering Weather Systems',     delay: 450  },
             { progress: 62,  text: 'Initializing Audio Engine',     delay: 400  },
-            { progress: 78,  text: 'Loading Campus Intelligence',   delay: 500  },
-            { progress: 90,  text: 'Calibrating Visuals',           delay: 350  },
-            { progress: 100, text: 'Welcome to Ghousia',            delay: 600  },
+            { progress: 78,  text: 'Loading Wedding Concierge',     delay: 500  },
+            { progress: 90,  text: 'Calibrating Dynamic Lighting',  delay: 350  },
+            { progress: 100, text: 'Welcome to Auralis',            delay: 600  },
         ];
 
         let currentStage = 0;
