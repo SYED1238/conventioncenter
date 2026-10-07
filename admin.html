@@ -15,7 +15,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="admin.css?v=1.0">
+    <link rel="stylesheet" href="admin.css?v=2.0">
 </head>
 
 <body>
@@ -33,7 +33,7 @@
                     <span>Auralis Admin</span>
                     <span class="brand-badge">Executive</span>
                 </div>
-                <span class="brand-subtitle">Calendar &amp; Booking Management Hub</span>
+                <span class="brand-subtitle hide-on-mobile">Calendar &amp; Booking Management Hub</span>
             </div>
         </div>
 
@@ -47,15 +47,15 @@
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                <span>Public Website</span>
+                <span class="nav-btn-text">Website</span>
             </a>
 
-            <button class="btn-primary-action" id="btn-new-booking">
+            <button class="btn-primary-action nav-new-btn" id="btn-new-booking">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                <span>+ New Booking</span>
+                <span>+ Booking</span>
             </button>
         </div>
     </header>
@@ -217,6 +217,11 @@
 
             <!-- Month Days Grid (populated dynamically) -->
             <div class="cal-grid" id="cal-grid"></div>
+
+            <!-- Mobile Day Quick Inspector & Agenda Strip (Touch Optimized) -->
+            <div class="cal-mobile-agenda" id="cal-mobile-agenda" aria-live="polite">
+                <!-- Dynamically populated when touching any calendar date -->
+            </div>
         </section>
 
         <!-- 4. VIEW 2: Bookings List / Table View (Initially Hidden) -->
@@ -416,10 +421,36 @@
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar (Visible on mobile <= 768px) -->
+    <nav class="mobile-bottom-bar" id="mobile-bottom-bar" aria-label="Mobile Navigation">
+        <button class="mob-nav-btn active" id="mob-btn-cal" data-view="calendar" title="Calendar View">
+            <span class="mob-btn-icon">📅</span>
+            <span class="mob-btn-label">Calendar</span>
+        </button>
+        <button class="mob-nav-btn" id="mob-btn-table" data-view="table" title="Bookings List">
+            <span class="mob-btn-icon">📋</span>
+            <span class="mob-btn-label">Bookings</span>
+        </button>
+        <button class="mob-nav-fab" id="mob-fab-new" title="Create New Booking" aria-label="New Booking">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+        <button class="mob-nav-btn" id="mob-btn-notes" data-view="notes" title="Notes &amp; Reminders">
+            <span class="mob-btn-icon">📝</span>
+            <span class="mob-btn-label">Notes</span>
+        </button>
+        <button class="mob-nav-btn" id="mob-btn-theme" title="Toggle Theme">
+            <span class="mob-btn-icon" id="mob-theme-icon">🌙</span>
+            <span class="mob-btn-label">Theme</span>
+        </button>
+    </nav>
+
     <!-- Toast Notification Hub -->
     <div class="toast-hub" id="toast-hub" aria-live="polite"></div>
 
-    <script src="admin.js?v=1.0"></script>
+    <script src="admin.js?v=2.0"></script>
 </body>
 
 </html>

@@ -319,11 +319,19 @@
             const dateKey = `${nextMonthDate.getFullYear()}-${pad2(nextMonthDate.getMonth() + 1)}-${pad2(n)}`;
             elCalGrid.appendChild(createCalCell(n, dateKey, true, bookings, dateNotes));
         }
+
+        // Initialize mobile agenda strip with currently selected date or first booking
+        const defaultDate = state.selectedDate || `${year}-${pad2(month + 1)}-24`;
+        updateMobileAgenda(defaultDate);
     }
 
     function createCalCell(dayNum, dateKey, isOtherMonth, bookings, dateNotes, isToday = false) {
         const cell = document.createElement('div');
-        cell.className = 'cal-cell' + (isOtherMonth ? ' other-month' : '') + (isToday ? ' is-today' : '');
+        const isSelected = state.selectedDate === dateKey;
+        cell.className = 'cal-cell' + 
+            (isOtherMonth ? ' other-month' : '') + 
+            (isToday ? ' is-today' : '') + 
+            (isSelected ? ' selected-day' : '');
         cell.dataset.date = dateKey;
 
         // Day top bar (number + note indicator)
@@ -349,9 +357,9 @@
 
         cell.appendChild(topEl);
 
-        // Day slots
-        const eventsContainer = document.createElement('div');
-        eventsContainer.className = 'cell-events';
+        // 1. DESKTOP Slots Container
+        const desktopEvents = document.createElement('div');
+        desktopEvents.className = 'cell-events cell-events-desktop';
 
         if (dayBookings.length > 0) {
             dayBookings.forEach(booking => {
@@ -364,24 +372,186 @@
                     <span class="slot-session-icon">${sIcon}</span>
                     <span class="slot-client-name">${escapeHtml(booking.clientName)}</span>
                 `;
-                eventsContainer.appendChild(badge);
+                desktopEvents.appendChild(badge);
             });
         } else if (!isOtherMonth) {
             const openStatus = document.createElement('div');
             openStatus.className = 'cell-open-status';
             openStatus.textContent = '✨ Open (2 slots)';
-            eventsContainer.appendChild(openStatus);
+            desktopEvents.appendChild(openStatus);
         }
+        cell.appendChild(desktopEvents);
 
-        cell.appendChild(eventsContainer);
+        // 2. MOBILE Status Indicators (Compact colored dots & icons)
+        const mobileDots = document.createElement('div');
+        mobileDots.className = 'cell-events-mobile';
 
-        // Click handler to open Inspector
+        if (dayBookings.length > 0) {
+            dayBookings.forEach(booking => {
+                const dot = document.createElement('span');
+                dot.className = `m-cal-dot ${booking.status}`;
+                const sIcon = booking.session === 'noon' ? '☀️' : (booking.session === 'night' ? '🌙' : '👑');
+                dot.textContent = sIcon;
+                dot.title = `${booking.clientName} (${booking.session})`;
+                mobileDots.appendChild(dot);
+            });
+            if (hasDateNote) {
+                const noteDot = document.createElement('span');
+                noteDot.className = 'm-cal-dot note';
+                noteDot.textContent = '📌';
+                noteDot.title = 'Date Note';
+                mobileDots.appendChild(noteDot);
+            }
+        } else if (!isOtherMonth) {
+            const openDot = document.createElement('span');
+            openDot.className = 'm-cal-dot open';
+            openDot.textContent = '•';
+            mobileDots.appendChild(openDot);
+        }
+        cell.appendChild(mobileDots);
+
+        // Click handler: on mobile updates agenda card & opens inspector on double-tap; on desktop opens inspector directly
         cell.addEventListener('click', () => {
             playTick(580);
+            const isMobile = window.innerWidth <= 768;
+            state.selectedDate = dateKey;
+            
+            // Highlight selected cell
+            document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected-day'));
+            cell.classList.add('selected-day');
+
+            updateMobileAgenda(dateKey);
+
+            if (!isMobile) {
+                openDateInspector(dateKey);
+            }
+        });
+
+        // Double click always opens inspector even on mobile
+        cell.addEventListener('dblclick', () => {
             openDateInspector(dateKey);
         });
 
         return cell;
+    }
+
+    // 10D. MOBILE DAY AGENDA STRIP (Touch-Optimized Day Summary)
+    function updateMobileAgenda(dateKey) {
+        const agendaEl = document.getElementById('cal-mobile-agenda');
+        if (!agendaEl) return;
+
+        state.selectedDate = dateKey;
+
+        const bookings = getBookings();
+        const dateNotes = getDateNotes();
+        const dayBookings = bookings.filter(b => b.date === dateKey);
+        const dayNote = dateNotes[dateKey] || '';
+
+        const noonBooking = dayBookings.find(b => b.session === 'noon' || b.session === 'fullday');
+        const nightBooking = dayBookings.find(b => b.session === 'night' || b.session === 'fullday');
+
+        let slotsHtml = '';
+
+        // Afternoon Slot
+        if (noonBooking) {
+            slotsHtml += `
+                <div class="mob-agenda-slot booked ${noonBooking.status}">
+                    <div class="mob-slot-header">
+                        <span class="mob-slot-time">☀️ Afternoon / Noon Slot</span>
+                        <span class="status-badge ${noonBooking.status}">${noonBooking.status}</span>
+                    </div>
+                    <div class="mob-slot-client">${escapeHtml(noonBooking.clientName)}</div>
+                    <div class="mob-slot-sub">${escapeHtml(noonBooking.eventType || 'Wedding')} • ${formatCurrency(noonBooking.advancePaid)} Paid</div>
+                </div>
+            `;
+        } else {
+            slotsHtml += `
+                <div class="mob-agenda-slot open">
+                    <div class="mob-slot-header">
+                        <span class="mob-slot-time">☀️ Afternoon / Noon Slot</span>
+                        <span class="mob-slot-avail">✨ Available</span>
+                    </div>
+                    <div class="mob-slot-sub">11:00 AM – 4:00 PM • Ready for booking</div>
+                </div>
+            `;
+        }
+
+        // Evening Slot
+        if (nightBooking) {
+            slotsHtml += `
+                <div class="mob-agenda-slot booked ${nightBooking.status}">
+                    <div class="mob-slot-header">
+                        <span class="mob-slot-time">🌙 Evening / Night Slot</span>
+                        <span class="status-badge ${nightBooking.status}">${nightBooking.status}</span>
+                    </div>
+                    <div class="mob-slot-client">${escapeHtml(nightBooking.clientName)}</div>
+                    <div class="mob-slot-sub">${escapeHtml(nightBooking.eventType || 'Reception')} • ${formatCurrency(nightBooking.advancePaid)} Paid</div>
+                </div>
+            `;
+        } else {
+            slotsHtml += `
+                <div class="mob-agenda-slot open">
+                    <div class="mob-slot-header">
+                        <span class="mob-slot-time">🌙 Evening / Night Slot</span>
+                        <span class="mob-slot-avail">✨ Available</span>
+                    </div>
+                    <div class="mob-slot-sub">6:00 PM – 12:00 AM • Ready for booking</div>
+                </div>
+            `;
+        }
+
+        agendaEl.innerHTML = `
+            <div class="mob-agenda-card">
+                <div class="mob-agenda-top">
+                    <div class="mob-agenda-date-info">
+                        <span class="mob-agenda-badge">Selected Date Details</span>
+                        <h3 class="mob-agenda-date">${formatDisplayDate(dateKey)}</h3>
+                    </div>
+                    <button class="btn-primary-action mob-agenda-open-btn" id="mob-agenda-inspect-btn" title="Open full inspector">
+                        <span>Details</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+
+                <div class="mob-agenda-slots-list">
+                    ${slotsHtml}
+                </div>
+
+                ${dayNote ? `
+                    <div class="mob-agenda-note">
+                        <span class="mob-note-icon">📝</span>
+                        <span><strong>Note:</strong> ${escapeHtml(dayNote)}</span>
+                    </div>
+                ` : ''}
+
+                <div class="mob-agenda-actions">
+                    <button class="btn-secondary" id="mob-btn-quick-close" style="flex: 1; font-size: 12px; color: var(--adm-rose); border-color: var(--adm-rose-border);">
+                        🚫 Close Date
+                    </button>
+                    <button class="btn-primary-action" id="mob-btn-quick-book" style="flex: 1; font-size: 12px;">
+                        + Book Slot
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Bind quick action listeners
+        const inspectBtn = document.getElementById('mob-agenda-inspect-btn');
+        if (inspectBtn) inspectBtn.addEventListener('click', () => openDateInspector(dateKey));
+
+        const quickBookBtn = document.getElementById('mob-btn-quick-book');
+        if (quickBookBtn) quickBookBtn.addEventListener('click', () => openBookingModal(null, dateKey));
+
+        const quickCloseBtn = document.getElementById('mob-btn-quick-close');
+        if (quickCloseBtn) quickCloseBtn.addEventListener('click', () => {
+            openBookingModal(null, dateKey, 'fullday');
+            const selectStatus = document.getElementById('book-status');
+            const inputClient = document.getElementById('book-client');
+            const inputPhone = document.getElementById('book-phone');
+            if (selectStatus) selectStatus.value = 'blocked';
+            if (inputClient) inputClient.value = 'Date Closed / Maintenance';
+            if (inputPhone) inputPhone.value = 'Administration';
+        });
     }
 
     // 11. DATE INSPECTOR MODAL
@@ -811,31 +981,31 @@
         filtered.forEach(b => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>
-                    <div style="font-weight: 700; color: #fff;">${b.date}</div>
+                <td data-label="Date">
+                    <div style="font-weight: 700; color: var(--adm-text);">${b.date}</div>
                     <div style="font-size: 11px; color: var(--adm-text-dim);">${formatDisplayDate(b.date)}</div>
                 </td>
-                <td>
+                <td data-label="Session">
                     ${getSessionBadge(b.session)}
                 </td>
-                <td>
+                <td data-label="Client">
                     <div class="table-client-meta">
                         <span class="table-client-name">${escapeHtml(b.clientName)}</span>
-                        <span class="table-client-phone">${escapeHtml(b.phone)}</span>
+                        <a href="tel:${b.phone}" class="table-client-phone" style="text-decoration: none; color: var(--adm-gold); font-weight: 600;">${escapeHtml(b.phone)}</a>
                     </div>
                 </td>
-                <td>
+                <td data-label="Event Type">
                     <div>${escapeHtml(b.eventType || 'Wedding')}</div>
                     <div style="font-size: 11px; color: var(--adm-text-dim);">${b.guests ? b.guests + ' guests' : ''}</div>
                 </td>
-                <td>
+                <td data-label="Status">
                     <span class="status-badge ${b.status}">${b.status}</span>
                 </td>
-                <td>
-                    <div style="font-weight: 600; color: var(--adm-gold);">${formatCurrency(b.advancePaid)}</div>
+                <td data-label="Financials">
+                    <div style="font-weight: 700; color: var(--adm-gold);">${formatCurrency(b.advancePaid)}</div>
                     <div style="font-size: 11px; color: var(--adm-text-dim);">Total: ${formatCurrency(b.totalAmount)}</div>
                 </td>
-                <td>
+                <td data-label="Actions">
                     <div class="table-actions">
                         <button class="btn-icon-table btn-tbl-edit" data-id="${b.id}" title="Edit Booking">✏️</button>
                         <button class="btn-icon-table delete btn-tbl-del" data-id="${b.id}" title="Delete Booking">🗑️</button>
@@ -924,7 +1094,7 @@
                     </span>
                     <span class="cell-note-pill">${item.tag}</span>
                 </div>
-                <div style="font-weight: 700; font-size: 14px; color: #fff;">${escapeHtml(item.title)}</div>
+                <div style="font-weight: 700; font-size: 14px; color: var(--adm-text);">${escapeHtml(item.title)}</div>
                 <div class="note-body">${escapeHtml(item.text)}</div>
                 <div class="note-footer">
                     <span>${item.date}</span>
@@ -960,6 +1130,11 @@
         if (elTabCalendar) elTabCalendar.classList.toggle('active', viewName === 'calendar');
         if (elTabTable) elTabTable.classList.toggle('active', viewName === 'table');
         if (elTabNotes) elTabNotes.classList.toggle('active', viewName === 'notes');
+
+        // Sync mobile bottom navigation bar buttons
+        document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === viewName);
+        });
 
         if (elCalendarView) elCalendarView.style.display = viewName === 'calendar' ? 'flex' : 'none';
         if (elTableView) elTableView.style.display = viewName === 'table' ? 'block' : 'none';
@@ -1174,15 +1349,18 @@
         // Theme Management (Default is pristine light / white theme)
         const themeBtn = document.getElementById('btn-theme-toggle');
         const themeIcon = document.getElementById('theme-toggle-icon');
+        const mobThemeIcon = document.getElementById('mob-theme-icon');
 
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
                 if (themeIcon) themeIcon.textContent = '☀️';
+                if (mobThemeIcon) mobThemeIcon.textContent = '☀️';
                 if (themeBtn) themeBtn.title = 'Switch to White Theme';
             } else {
                 document.documentElement.removeAttribute('data-theme');
                 if (themeIcon) themeIcon.textContent = '🌙';
+                if (mobThemeIcon) mobThemeIcon.textContent = '🌙';
                 if (themeBtn) themeBtn.title = 'Switch to Dark Theme';
             }
             localStorage.setItem('auralis_admin_theme', theme);
@@ -1191,15 +1369,30 @@
         const savedTheme = localStorage.getItem('auralis_admin_theme') || 'light';
         applyTheme(savedTheme);
 
-        if (themeBtn) {
-            themeBtn.addEventListener('click', () => {
-                const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-                const next = current === 'dark' ? 'light' : 'dark';
-                applyTheme(next);
-                playTick(next === 'light' ? 700 : 500);
-                showToast(next === 'light' ? '☀️' : '🌙', `Switched to ${next === 'light' ? 'Pristine White' : 'Dark Regal'} Theme`);
-            });
+        function toggleThemeMode() {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            playTick(next === 'light' ? 700 : 500);
+            showToast(next === 'light' ? '☀️' : '🌙', `Switched to ${next === 'light' ? 'Pristine White' : 'Dark Regal'} Theme`);
         }
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', toggleThemeMode);
+        }
+
+        // Mobile Bottom Navigation Bar Controls
+        const mobBtnCal = document.getElementById('mob-btn-cal');
+        const mobBtnTable = document.getElementById('mob-btn-table');
+        const mobBtnNotes = document.getElementById('mob-btn-notes');
+        const mobFabNew = document.getElementById('mob-fab-new');
+        const mobBtnTheme = document.getElementById('mob-btn-theme');
+
+        if (mobBtnCal) mobBtnCal.addEventListener('click', () => switchView('calendar'));
+        if (mobBtnTable) mobBtnTable.addEventListener('click', () => switchView('table'));
+        if (mobBtnNotes) mobBtnNotes.addEventListener('click', () => switchView('notes'));
+        if (mobFabNew) mobFabNew.addEventListener('click', () => openBookingModal());
+        if (mobBtnTheme) mobBtnTheme.addEventListener('click', toggleThemeMode);
 
         // Initial Renders
         renderStats();
