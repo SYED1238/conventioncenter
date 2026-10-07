@@ -101,8 +101,8 @@
         } catch (e) {}
     }
 
-    // 4. MOCK AVAILABILITY DATASET (Supabase-ready schema)
-    const RESERVED_SLOTS = new Set([
+    // 4. MOCK AVAILABILITY DATASET (Synced dynamically with Admin Suite)
+    const DEFAULT_RESERVED_SLOTS = [
         '2026-10-17-night',
         '2026-10-24-night',
         '2026-11-14-night',
@@ -111,7 +111,43 @@
         '2026-02-14-night',
         '2025-12-31-night',
         '2026-04-18-night'
-    ]);
+    ];
+
+    function normalizeDateKey(dStr) {
+        if (!dStr) return '';
+        const parts = String(dStr).split('-');
+        if (parts.length === 3) {
+            return `${parts[0]}-${pad2(Number(parts[1]))}-${pad2(Number(parts[2]))}`;
+        }
+        return dStr;
+    }
+
+    function getActiveReservedSlots() {
+        const set = new Set(DEFAULT_RESERVED_SLOTS);
+        try {
+            const raw = localStorage.getItem('auralis_admin_bookings_v1');
+            if (raw) {
+                const bookings = JSON.parse(raw);
+                bookings.forEach(b => {
+                    if (b.status !== 'cancelled') {
+                        const dClean = normalizeDateKey(b.date);
+                        if (!b.session || b.session === 'fullday' || b.status === 'blocked') {
+                            set.add(`${dClean}-noon`);
+                            set.add(`${dClean}-night`);
+                            set.add(dClean);
+                        } else {
+                            set.add(`${dClean}-${b.session}`);
+                        }
+                    }
+                });
+            }
+        } catch (e) {}
+        return set;
+    }
+
+    function isReservedKey(key) {
+        return getActiveReservedSlots().has(key);
+    }
 
     function queryAvailability(day, month, year, session) {
         return new Promise((resolve) => {
@@ -120,7 +156,7 @@
                 const dPad = pad2(day);
                 const key = `${year}-${mPad}-${dPad}-${session}`;
 
-                const isReserved = RESERVED_SLOTS.has(key);
+                const isReserved = isReservedKey(key);
 
                 resolve({
                     day,
@@ -822,15 +858,68 @@
 
 
 
-        // Evaluate live status label
+        // Evaluate live status label for both sessions
         const mPad = monthNum;
         const dPad = pad2(day);
-        const key = `${year}-${mPad}-${dPad}-${state.selectedSession}`;
-        const isReserved = RESERVED_SLOTS.has(key);
+        const dateKey = `${year}-${mPad}-${dPad}`;
+        const noonKey = `${dateKey}-noon`;
+        const nightKey = `${dateKey}-night`;
 
+        const isNoonReserved = isReservedKey(noonKey);
+        const isNightReserved = isReservedKey(nightKey);
+        const isCurrentSessionReserved = state.selectedSession === 'noon' ? isNoonReserved : isNightReserved;
+
+        // 1. Update session choice card badges
+        if (sessionNoonBtn) {
+            const badge = sessionNoonBtn.querySelector('.choice-badge');
+            if (badge) {
+                badge.textContent = isNoonReserved ? 'CLOSED' : 'DAY';
+                badge.classList.toggle('is-closed', isNoonReserved);
+            }
+        }
+
+        if (sessionNightBtn) {
+            const badge = sessionNightBtn.querySelector('.choice-badge');
+            if (badge) {
+                badge.textContent = isNightReserved ? 'CLOSED' : 'EVE';
+                badge.classList.toggle('is-closed', isNightReserved);
+            }
+        }
+
+        // 2. Update status dot & text in detail panel
+        const activeStatusDot = document.querySelector('.active-status-dot');
         if (activeStatusText) {
-            activeStatusText.textContent = isReserved ? 'Reserved Slot' : 'Available for Buyout';
-            activeStatusText.style.color = isReserved ? '#f472b6' : '#10b981';
+            if (isCurrentSessionReserved) {
+                if (isNoonReserved && isNightReserved) {
+                    activeStatusText.textContent = '⛔ FULL DATE CLOSED — BOOKED';
+                } else {
+                    activeStatusText.textContent = `⛔ ${state.selectedSession.toUpperCase()} CLOSED — BOOKED`;
+                }
+                activeStatusText.style.color = '#f43f5e';
+                if (activeStatusDot) {
+                    activeStatusDot.style.background = '#f43f5e';
+                    activeStatusDot.style.boxShadow = '0 0 10px #f43f5e';
+                }
+            } else {
+                activeStatusText.textContent = '✦ Available for Buyout';
+                activeStatusText.style.color = '#10b981';
+                if (activeStatusDot) {
+                    activeStatusDot.style.background = '#10b981';
+                    activeStatusDot.style.boxShadow = '0 0 8px #10b981';
+                }
+            }
+        }
+
+        // 3. Update CTA button on main page
+        if (checkAvailabilityBtn) {
+            const ctaText = checkAvailabilityBtn.querySelector('.cta-text');
+            if (isCurrentSessionReserved) {
+                checkAvailabilityBtn.classList.add('slot-closed');
+                if (ctaText) ctaText.textContent = `⛔ Booking Closed (${state.selectedSession === 'noon' ? 'Noon' : 'Night'})`;
+            } else {
+                checkAvailabilityBtn.classList.remove('slot-closed');
+                if (ctaText) ctaText.textContent = 'Check Availability';
+            }
         }
     }
 
@@ -940,6 +1029,15 @@
             ? 'Noon Celebration (10:00 AM – 3:30 PM)'
             : 'Night Celebration (5:30 PM – 11:30 PM)';
 
+        const mIdx = MONTHS_FULL.indexOf(result.month);
+        const mPad = pad2(mIdx + 1);
+        const dPad = pad2(result.day);
+        const dateKey = `${result.year}-${mPad}-${dPad}`;
+        const otherSession = result.session === 'noon' ? 'night' : 'noon';
+        const otherKey = `${dateKey}-${otherSession}`;
+        const isOtherReserved = isReservedKey(otherKey);
+        const otherSessionTitle = otherSession === 'noon' ? 'Noon Session (10 AM – 3:30 PM)' : 'Night Session (5:30 PM – 11:30 PM)';
+
         resultPanel.innerHTML = `
             <div class="result-card">
                 <button class="result-close-btn" id="result-close-btn" aria-label="Close Result">
@@ -950,7 +1048,7 @@
                 </button>
 
                 <div class="result-badge ${isAvail ? 'available' : 'reserved'}">
-                    <span>${isAvail ? '✦ AVAILABLE FOR CELEBRATION' : '✦ RESERVED FOR PRIVATE GALA'}</span>
+                    <span>${isAvail ? '✦ AVAILABLE FOR CELEBRATION' : '⛔ BOOKING CLOSED · RESERVED'}</span>
                 </div>
 
                 <h3 class="result-date-title">${result.day} ${result.month} ${result.year}</h3>
@@ -959,7 +1057,7 @@
                 <div class="result-body-text">
                     ${isAvail
                         ? `Magnificent news! The sanctuary is unreserved for this slot. You are eligible for an exclusive private buyout across all halls, starlight lawns, and bridal pavilions.`
-                        : `This evening slot is currently held for an exclusive celebration. Nearby weekend dates or the alternate Noon session may still be reserved for your party.`}
+                        : `This ${result.session === 'noon' ? 'Afternoon' : 'Evening'} celebration slot has been officially closed and marked as reserved in the venue booking records. ${!isOtherReserved ? `The alternate ${otherSession === 'noon' ? 'Afternoon' : 'Evening'} slot on this date is still open.` : `Both sessions on this date are fully reserved.`}`}
                 </div>
 
                 <div class="result-details-grid">
@@ -977,8 +1075,8 @@
                     </div>
                     <div class="result-detail-item">
                         <span class="detail-label">Sanctuary Status</span>
-                        <span class="detail-val" style="color: ${isAvail ? '#6ee7b7' : '#f472b6'};">
-                            ${isAvail ? 'Open for Deposit' : 'Waitlist Only'}
+                        <span class="detail-val" style="color: ${isAvail ? '#6ee7b7' : '#fb7185'};">
+                            ${isAvail ? 'Open for Deposit' : 'Booking Closed'}
                         </span>
                     </div>
                 </div>
@@ -987,8 +1085,12 @@
                     ${isAvail
                         ? `<button class="result-btn-primary" id="result-book-btn">Proceed to Reserve Date →</button>
                            <button class="result-btn-secondary" id="result-viewing-btn">Schedule Private Tour</button>`
-                        : `<button class="result-btn-primary" id="result-switch-btn">Switch to Noon Slot</button>
-                           <button class="result-btn-secondary" id="result-concierge-btn">Speak with Royal Concierge</button>`
+                        : (!isOtherReserved
+                            ? `<button class="result-btn-primary" id="result-switch-btn">Switch to ${otherSessionTitle} →</button>
+                               <button class="result-btn-secondary" id="result-concierge-btn">Speak with Royal Concierge</button>`
+                            : `<button class="result-btn-closed" disabled>⛔ All Sessions Closed for this Date</button>
+                               <button class="result-btn-secondary" id="result-concierge-btn">Inquire for Other Dates</button>`
+                          )
                     }
                 </div>
             </div>
@@ -1090,6 +1192,27 @@
 
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeResultModal();
+    });
+
+    // Real-Time Cross-Tab & Focus Synchronization with Admin Suite
+    window.addEventListener('storage', (e) => {
+        if (!e.key || e.key === 'auralis_admin_bookings_v1') {
+            updateDetailPanel();
+        }
+    });
+
+    window.addEventListener('auralis-bookings-updated', () => {
+        updateDetailPanel();
+    });
+
+    window.addEventListener('focus', () => {
+        updateDetailPanel();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            updateDetailPanel();
+        }
     });
 
     // Auto-init

@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.width = window.innerWidth;
         state.height = window.innerHeight;
 
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
         Object.keys(canvases).forEach(key => {
             const canvas = canvases[key];
@@ -1491,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.vx = 0;
             this.slideThreshold = 2.5 + Math.random() * 1.5; // Starts sliding when it accumulates mass
             this.trail = [];
-            this.maxTrailLength = 15 + Math.floor(Math.random() * 20);
+            this.maxTrailLength = 6 + Math.floor(Math.random() * 8);
             this.isSliding = Math.random() > 0.82; // Some drops slide immediately
 
             if (this.isSliding) {
@@ -1597,16 +1597,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const glassDrops = [];
     const cardFlows = [];
 
-    // Particle Limits (Dynamic based on screen width)
+    // Particle Limits (Dynamic based on screen width - tuned for low RAM & smooth 60fps)
     function getParticleLimits() {
         const isMobile = window.innerWidth <= 768;
         return {
-            stars: isMobile ? 30 : 75,
-            fireflies: isMobile ? 5 : 15,
-            birds: isMobile ? 6 : 12, // Increased from 3 : 5 to 6 : 12
-            clouds: isMobile ? 2 : 4,
-            rain: isMobile ? 100 : 320,
-            glass: isMobile ? 30 : 90
+            stars: isMobile ? 25 : 50,
+            fireflies: isMobile ? 4 : 10,
+            birds: isMobile ? 4 : 8,
+            clouds: 0, // Clouds removed
+            rain: isMobile ? 70 : 150,
+            glass: isMobile ? 18 : 40
         };
     }
 
@@ -1624,7 +1624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < limits.stars; i++) stars.push(new Star());
         for (let i = 0; i < limits.fireflies; i++) fireflies.push(new Firefly());
         for (let i = 0; i < limits.birds; i++) birds.push(new Bird());
-        for (let i = 0; i < limits.clouds; i++) clouds.push(new Cloud(true));
+        // Clouds completely removed
         for (let i = 0; i < limits.rain; i++) rainDrops.push(new RainDrop());
     }
 
@@ -1645,14 +1645,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Trigger canvas fades based on weather
     function triggerCanvasTransition(from, to) {
         if (to === 'clear') {
-            canvases.atmospheric.classList.add('active');  // Show for birds/clouds
+            canvases.atmospheric.classList.add('active');  // Show for birds
             canvases.glassDrops.classList.remove('active');
+            ctxs.glassDrops.clearRect(0, 0, state.width, state.height);
         } else if (to === 'rain') {
             canvases.atmospheric.classList.add('active');
             canvases.glassDrops.classList.add('active');
         } else if (to === 'night') {
             canvases.atmospheric.classList.add('active');
             canvases.glassDrops.classList.remove('active');
+            ctxs.glassDrops.clearRect(0, 0, state.width, state.height);
         }
     }
 
@@ -1716,18 +1718,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Global Anim Loop (60fps target)
+    // Global Anim Loop (Smooth 60fps, low memory footprint)
     function animate() {
-        // --- Smooth parallax interpolation ---
-        state.parallaxX += (state.targetParallaxX - state.parallaxX) * 0.06;
-        state.parallaxY += (state.targetParallaxY - state.parallaxY) * 0.06;
 
-        if (heroSection) {
-            heroSection.style.setProperty('--parallax-x', state.parallaxX.toFixed(2));
-            heroSection.style.setProperty('--parallax-y', state.parallaxY.toFixed(2));
+        // --- Smooth parallax interpolation (only write styles if moved) ---
+        const dx = (state.targetParallaxX - state.parallaxX) * 0.06;
+        const dy = (state.targetParallaxY - state.parallaxY) * 0.06;
+        state.parallaxX += dx;
+        state.parallaxY += dy;
+
+        if (heroSection && (Math.abs(dx) > 0.005 || Math.abs(dy) > 0.005)) {
+            const pxStr = state.parallaxX.toFixed(2);
+            const pyStr = state.parallaxY.toFixed(2);
+            if (pxStr !== lastParallaxX || pyStr !== lastParallaxY) {
+                heroSection.style.setProperty('--parallax-x', pxStr);
+                heroSection.style.setProperty('--parallax-y', pyStr);
+                lastParallaxX = pxStr;
+                lastParallaxY = pyStr;
+            }
         }
 
-        // --- 1. Draw Atmospheric Background Overlay Canvas (Stars, Rain, Fireflies, Birds, Clouds) ---
+        // --- 1. Draw Atmospheric Background Overlay Canvas (Stars, Rain, Fireflies, Birds) ---
         const atmCtx = ctxs.atmospheric;
         atmCtx.clearRect(0, 0, state.width, state.height);
 
@@ -1737,12 +1748,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 bird.update();
                 bird.draw(atmCtx);
             });
-
-            // Draw Clouds
-            clouds.forEach(cloud => {
-                cloud.update();
-                cloud.draw(atmCtx);
-            });
+            // Clouds completely removed per user request
         }
         else if (state.weather === 'night') {
             // Draw Twinkling Stars
@@ -1788,11 +1794,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- 2. Draw Foreground Glass Droplets (Rain only) ---
-        const glassCtx = ctxs.glassDrops;
-        glassCtx.clearRect(0, 0, state.width, state.height);
-
+        // --- 2. Draw Foreground Glass Droplets (Only cleared and drawn in Rain) ---
         if (state.weather === 'rain') {
+            const glassCtx = ctxs.glassDrops;
+            glassCtx.clearRect(0, 0, state.width, state.height);
             glassDrops.forEach(drop => {
                 drop.update();
                 // Check if drops are close enough to merge

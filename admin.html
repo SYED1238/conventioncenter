@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auralis Estate — Executive Admin Booking &amp; Calendar Suite</title>
+    <meta name="description"
+        content="Super simple, executive booking and calendar management dashboard for Auralis Wedding Hall &amp; Convention Center. Manage dates, sessions, client notes, and venue availability.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="admin.css?v=1.0">
+</head>
+
+<body>
+
+    <!-- Sticky Top Navigation Bar -->
+    <header class="admin-navbar">
+        <div class="brand-section">
+            <div class="brand-crest" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+            </div>
+            <div class="brand-meta">
+                <div class="brand-title">
+                    <span>Auralis Admin</span>
+                    <span class="brand-badge">Executive</span>
+                </div>
+                <span class="brand-subtitle">Calendar &amp; Booking Management Hub</span>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button class="theme-toggle-btn" id="btn-theme-toggle" title="Toggle Theme (White / Dark)" aria-label="Toggle Theme">
+                <span id="theme-toggle-icon">🌙</span>
+            </button>
+
+            <a href="index.html" class="nav-link-btn" title="Return to Public Website">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Public Website</span>
+            </a>
+
+            <button class="btn-primary-action" id="btn-new-booking">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>+ New Booking</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="admin-container">
+
+        <!-- 1. Executive Summary Cards (Stats) -->
+        <section class="stats-grid" aria-label="Booking Statistics">
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <span>📅</span>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Total Bookings</span>
+                    <span class="stat-value" id="stat-total-bookings">0</span>
+                    <span class="stat-sub">Across all sessions</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <span>👑</span>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Confirmed Events</span>
+                    <span class="stat-value" id="stat-confirmed-events">0</span>
+                    <span class="stat-sub">Deposits secured</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon amber">
+                    <span>⏳</span>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Upcoming Schedule</span>
+                    <span class="stat-value" id="stat-upcoming-events">0</span>
+                    <span class="stat-sub">Next 60 days</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <span>💰</span>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-label">Advance Received</span>
+                    <span class="stat-value" id="stat-total-revenue">₹0</span>
+                    <span class="stat-sub">Current book value</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Control Toolbar (View switch, Search, Filter, Export) -->
+        <section class="toolbar-card" aria-label="Toolbar controls">
+            <div class="view-tabs" role="tablist">
+                <button class="tab-btn active" id="tab-calendar" role="tab" aria-selected="true">
+                    <span>📅</span>
+                    <span>Calendar View</span>
+                </button>
+                <button class="tab-btn" id="tab-table" role="tab" aria-selected="false">
+                    <span>📋</span>
+                    <span>All Bookings List</span>
+                </button>
+                <button class="tab-btn" id="tab-notes" role="tab" aria-selected="false">
+                    <span>📝</span>
+                    <span>Notes &amp; Reminders</span>
+                </button>
+            </div>
+
+            <div class="toolbar-filters">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="adm-search-input" class="search-input" placeholder="Search couple, phone, notes, event...">
+                </div>
+
+                <select id="adm-status-filter" class="filter-select">
+                    <option value="all">All Statuses</option>
+                    <option value="confirmed">Confirmed Only</option>
+                    <option value="hold">Tentative / Hold</option>
+                    <option value="blocked">Blocked / Maintenance</option>
+                </select>
+
+                <button class="btn-secondary" id="btn-export-csv" title="Export schedule to CSV spreadsheet">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Export CSV</span>
+                </button>
+
+                <button class="btn-secondary" onclick="window.print()" title="Print booking schedule">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Print</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. VIEW 1: Calendar Management View -->
+        <section class="calendar-wrapper" id="calendar-view" aria-label="Monthly Calendar">
+            <!-- Calendar Top Bar -->
+            <div class="calendar-header">
+                <div class="cal-nav-group">
+                    <div class="cal-title-wrapper">
+                        <span class="cal-month-title" id="cal-month-title">November</span>
+                        <span class="cal-year-title" id="cal-year-title">2026</span>
+                    </div>
+
+                    <div style="display: flex; gap: 6px;">
+                        <button class="cal-btn-nav" id="cal-prev-month" title="Previous Month">‹</button>
+                        <button class="cal-btn-nav" id="cal-next-month" title="Next Month">›</button>
+                        <button class="cal-btn-today" id="cal-btn-today">Nov 2026 / Jump</button>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot confirmed"></span>
+                        <span>Confirmed Booking</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot hold"></span>
+                        <span>Hold / Tentative</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot blocked"></span>
+                        <span>Blocked</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot note"></span>
+                        <span>Has Notes</span>
+                    </div>
+                    <div class="legend-item">
+                        <span style="color: var(--adm-text-dim);">✨ Click any date to manage</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Days of Week Header -->
+            <div class="cal-weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+
+            <!-- Month Days Grid (populated dynamically) -->
+            <div class="cal-grid" id="cal-grid"></div>
+        </section>
+
+        <!-- 4. VIEW 2: Bookings List / Table View (Initially Hidden) -->
+        <section class="table-wrapper" id="table-view" style="display: none;" aria-label="Bookings Table">
+            <table class="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session</th>
+                        <th>Client / Couple</th>
+                        <th>Event Type</th>
+                        <th>Status</th>
+                        <th>Financials</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-table-body">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 5. VIEW 3: Notes & Reminders Master View (Initially Hidden) -->
+        <section class="notes-container" id="notes-view" style="display: none;" aria-label="Notes &amp; Reminders">
+            <div class="notes-header">
+                <div>
+                    <h2 class="notes-title">Master Notes &amp; Special Instructions</h2>
+                    <p style="font-size: 13px; color: var(--adm-text-muted);">All event decor guidelines, catering schedules, and hall maintenance notes in one place.</p>
+                </div>
+            </div>
+
+            <div class="notes-grid" id="notes-grid">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =====================================================================
+         MODAL 1: Day Detail Inspector Drawer / Modal
+         ===================================================================== -->
+    <div class="modal-overlay" id="modal-date-inspector" role="dialog" aria-modal="true">
+        <div class="modal-box" style="max-width: 680px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>📅</span>
+                    <span>Date Management &amp; Inspector</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-inspector" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body" id="inspector-body">
+                <!-- Populated dynamically by admin.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 2: Create / Edit Event Booking Modal
+         ===================================================================== -->
+    <div class="modal-overlay" id="modal-booking" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>👑</span>
+                    <span id="modal-booking-title">Create New Event Booking</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-booking-modal" aria-label="Close">✕</button>
+            </div>
+
+            <form id="form-booking">
+                <div class="modal-body">
+                    <!-- Date & Session Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="book-date">Event Date *</label>
+                            <input type="date" id="book-date" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="book-event-type">Event Category</label>
+                            <select id="book-event-type" class="form-select">
+                                <option value="Wedding &amp; Walima">Wedding &amp; Walima</option>
+                                <option value="Royal Reception Gala">Royal Reception Gala</option>
+                                <option value="Nikah &amp; Banquet">Nikah &amp; Banquet</option>
+                                <option value="Sangeet &amp; Mehendi">Sangeet &amp; Mehendi</option>
+                                <option value="Engagement Ceremony">Engagement Ceremony</option>
+                                <option value="Corporate Royal Gala">Corporate Royal Gala</option>
+                                <option value="Estate Maintenance">Estate Maintenance (Block)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Session Selector Radio Pills -->
+                    <div class="form-group">
+                        <label class="form-label">Booking Session *</label>
+                        <div class="session-pill-group">
+                            <label class="session-radio-label">
+                                <input type="radio" name="book-session" value="noon">
+                                <span class="s-icon">☀️</span>
+                                <span class="s-title">Afternoon / Noon</span>
+                                <span class="s-time">11:00 AM – 4:00 PM</span>
+                            </label>
+
+                            <label class="session-radio-label">
+                                <input type="radio" name="book-session" value="night" checked>
+                                <span class="s-icon">🌙</span>
+                                <span class="s-title">Evening / Night</span>
+                                <span class="s-time">6:00 PM – 12:00 AM</span>
+                            </label>
+
+                            <label class="session-radio-label">
+                                <input type="radio" name="book-session" value="fullday">
+                                <span class="s-icon">👑</span>
+                                <span class="s-title">Full Day Buyout</span>
+                                <span class="s-time">Entire Day Exclusive</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Client & Contact Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="book-client">Couple / Client Name *</label>
+                            <input type="text" id="book-client" class="form-input" placeholder="e.g. Farhan &amp; Ayesha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="book-phone">Contact Phone / WhatsApp *</label>
+                            <input type="tel" id="book-phone" class="form-input" placeholder="e.g. +91 98490 12345" required>
+                        </div>
+                    </div>
+
+                    <!-- Email & Guest Count Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="book-email">Email Address</label>
+                            <input type="email" id="book-email" class="form-input" placeholder="client@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="book-guests">Expected Guests</label>
+                            <input type="number" id="book-guests" class="form-input" placeholder="e.g. 1000" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label" for="book-status">Booking Status</label>
+                        <select id="book-status" class="form-select">
+                            <option value="confirmed">🟢 Confirmed (Advance Received)</option>
+                            <option value="hold">🟡 Tentative / On Hold</option>
+                            <option value="blocked">🔴 Blocked / Maintenance Slot</option>
+                        </select>
+                    </div>
+
+                    <!-- Financial Summary Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="book-total">Total Hall Rent (₹)</label>
+                            <input type="number" id="book-total" class="form-input" placeholder="450000" min="0" step="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="book-advance">Advance Deposit Paid (₹)</label>
+                            <input type="number" id="book-advance" class="form-input" placeholder="200000" min="0" step="1000">
+                        </div>
+                    </div>
+
+                    <!-- Auto Calculation Preview -->
+                    <div class="calc-preview">
+                        <div class="calc-item">
+                            <span class="help-text">Pending Balance Due:</span>
+                            <span class="calc-val balance" id="calc-balance">₹2,50,000</span>
+                        </div>
+                        <span style="font-size: 11px; color: var(--adm-text-dim);">Auto-computed from Total &amp; Advance</span>
+                    </div>
+
+                    <!-- Notes & Special Instructions ("bro add notes") -->
+                    <div class="form-group">
+                        <label class="form-label" for="book-notes" style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>📝 Booking Notes &amp; Special Instructions</span>
+                            <span style="font-size: 11px; color: var(--adm-text-dim); text-transform: none; font-weight: normal;">Stage, Catering, Timing, Decor</span>
+                        </label>
+                        <textarea id="book-notes" class="form-textarea" placeholder="Enter special client requests (e.g. stage floral theme, catering agency, fireworks permissions, DJ cutoff time, food tasting notes)..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="btn-delete-booking" style="color: var(--adm-rose); border-color: var(--adm-rose-border); display: none;">
+                        🗑️ Delete
+                    </button>
+                    <div style="flex-grow: 1;"></div>
+                    <button type="button" class="btn-secondary" id="btn-cancel-booking">Cancel</button>
+                    <button type="submit" class="btn-primary-action">Save Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Hub -->
+    <div class="toast-hub" id="toast-hub" aria-live="polite"></div>
+
+    <script src="admin.js?v=1.0"></script>
+</body>
+
+</html>
