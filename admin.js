@@ -1346,53 +1346,22 @@
             }
         });
 
-        // Theme Management (Default is pristine light / white theme)
-        const themeBtn = document.getElementById('btn-theme-toggle');
-        const themeIcon = document.getElementById('theme-toggle-icon');
-        const mobThemeIcon = document.getElementById('mob-theme-icon');
-
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                if (themeIcon) themeIcon.textContent = '☀️';
-                if (mobThemeIcon) mobThemeIcon.textContent = '☀️';
-                if (themeBtn) themeBtn.title = 'Switch to White Theme';
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-                if (themeIcon) themeIcon.textContent = '🌙';
-                if (mobThemeIcon) mobThemeIcon.textContent = '🌙';
-                if (themeBtn) themeBtn.title = 'Switch to Dark Theme';
-            }
-            localStorage.setItem('auralis_admin_theme', theme);
-        }
-
-        const savedTheme = localStorage.getItem('auralis_admin_theme') || 'light';
-        applyTheme(savedTheme);
-
-        function toggleThemeMode() {
-            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-            const next = current === 'dark' ? 'light' : 'dark';
-            applyTheme(next);
-            playTick(next === 'light' ? 700 : 500);
-            showToast(next === 'light' ? '☀️' : '🌙', `Switched to ${next === 'light' ? 'Pristine White' : 'Dark Regal'} Theme`);
-        }
-
-        if (themeBtn) {
-            themeBtn.addEventListener('click', toggleThemeMode);
-        }
+        // Enforce pure pristine white luxury theme permanently
+        document.documentElement.removeAttribute('data-theme');
+        try {
+            localStorage.removeItem('auralis_admin_theme');
+        } catch (e) {}
 
         // Mobile Bottom Navigation Bar Controls
         const mobBtnCal = document.getElementById('mob-btn-cal');
         const mobBtnTable = document.getElementById('mob-btn-table');
         const mobBtnNotes = document.getElementById('mob-btn-notes');
         const mobFabNew = document.getElementById('mob-fab-new');
-        const mobBtnTheme = document.getElementById('mob-btn-theme');
 
         if (mobBtnCal) mobBtnCal.addEventListener('click', () => switchView('calendar'));
         if (mobBtnTable) mobBtnTable.addEventListener('click', () => switchView('table'));
         if (mobBtnNotes) mobBtnNotes.addEventListener('click', () => switchView('notes'));
         if (mobFabNew) mobFabNew.addEventListener('click', () => openBookingModal());
-        if (mobBtnTheme) mobBtnTheme.addEventListener('click', toggleThemeMode);
 
         // Initial Renders
         renderStats();

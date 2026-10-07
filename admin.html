@@ -15,7 +15,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="admin.css?v=2.0">
+    <link rel="stylesheet" href="admin.css?v=3.0">
 </head>
 
 <body>
@@ -38,10 +38,6 @@
         </div>
 
         <div class="nav-actions">
-            <button class="theme-toggle-btn" id="btn-theme-toggle" title="Toggle Theme (White / Dark)" aria-label="Toggle Theme">
-                <span id="theme-toggle-icon">🌙</span>
-            </button>
-
             <a href="index.html" class="nav-link-btn" title="Return to Public Website">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -441,16 +437,16 @@
             <span class="mob-btn-icon">📝</span>
             <span class="mob-btn-label">Notes</span>
         </button>
-        <button class="mob-nav-btn" id="mob-btn-theme" title="Toggle Theme">
-            <span class="mob-btn-icon" id="mob-theme-icon">🌙</span>
-            <span class="mob-btn-label">Theme</span>
-        </button>
+        <a href="index.html" class="mob-nav-btn" title="View Public Website">
+            <span class="mob-btn-icon">🌐</span>
+            <span class="mob-btn-label">Website</span>
+        </a>
     </nav>
 
     <!-- Toast Notification Hub -->
     <div class="toast-hub" id="toast-hub" aria-live="polite"></div>
 
-    <script src="admin.js?v=2.0"></script>
+    <script src="admin.js?v=3.0"></script>
 </body>
 
 </html>
